@@ -2,12 +2,15 @@
 version: 1
 project:
   id: 4790582b-2186-41f1-b522-53cd9027de42
-  title: Encoders Report
+  title:
   # description:
   # keywords: []
+  toc:
+    - file: README.md
+    - file: report.md
+    - file: notebook.ipynb
   authors: [Gabriel Kressin Palacios, Gio Li, Kristijan Armeni]
   github: https://github.com/KristijanArmeni/encoders_report
-  exclude: notebook.ipynb
   # To autogenerate a Table of Contents, run "myst init --write-toc"
 site:
   template: book-theme

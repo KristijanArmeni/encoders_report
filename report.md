@@ -1,10 +1,17 @@
 ---
-title: Encoders Report
+title: Report
 ---
-# Encoding models of fMRI in story listening
 
 # Introduction
 
 # Methods
 
 
+# Results
+
+See [](#output-fig-test) below.
+
+```{figure} #fig-test
+:label: output-fig-test
+Testing a caption.
+```
