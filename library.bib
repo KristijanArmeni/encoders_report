@@ -1,0 +1,77 @@
+
+@article{huth_natural_2016,
+	title = {Natural speech reveals the semantic maps that tile human cerebral cortex},
+	volume = {532},
+	copyright = {2016 Nature Publishing Group},
+	issn = {1476-4687},
+	doi = {10.1038/nature17637},
+	abstract = {{\textless}p{\textgreater}It has been proposed that language meaning is represented throughout the cerebral cortex in a distributed ‘semantic system’, but little is known about the details of this network; here, voxel-wise modelling of functional MRI data collected while subjects listened to natural stories is used to create a detailed atlas that maps representations of word meaning in the human brain.{\textless}/p{\textgreater}},
+	language = {En},
+	number = {7600},
+	urldate = {2018-01-08},
+	journal = {Nature},
+	author = {Huth, Alexander G. and Heer, Wendy A. de and Griffiths, Thomas L. and Theunissen, Frédéric E. and Gallant, Jack L.},
+	month = apr,
+	year = {2016},
+	keywords = {computational neuroscience, fixme, fMRI, project.lstmMEG, project.vsmMEG, readme, semantics},
+	pages = {453},
+	annote = {Summary and comment
+Huth et al (2016) used word co-occurrence statistics to determine vector space representations of words that capture statistical patterning of each individual word in the story. They recorded fMRI while participants listened to over 2 hours of narratives. They say that "semantic selectivity of most regions is unknown" as their motivation to do this. They then investigated the "semantic tuning" of each voxel by applying a PCA to the estimated models. They also used an algorithm to create a single atlas based on data from all subjects. 
+The discussion has a good \$ to it, but is unfortunately empty of intellectual contributions.
+Comment
+
+They used a 985 dim feature space
+they apparently scrapped the corpus themselves
+nuisance var: word rate, phoneme rate, phonemes
+ridge regression, like TFR
+
+The way they estimate "semantic tuning" or the way Berezutskaya et al (2017) estimate the "tuning profiles" is how you should go about determining "temporal tuning profiles".
+The question could be "How do these semantic features, when aggregated into higher order categories" module temporal profile of responses.},
+	annote = {TEMPLATE
+Background
+ 
+Problem/question
+ 
+Hypothesis
+ 
+Stimuli
+ 
+Measurement
+ 
+Data analysis
+ 
+Key result
+ 
+Conclusion},
+	file = {Huth et al. - 2016 - Natural speech reveals the semantic maps that tile.pdf:/Volumes/GoogleDrive-100121059175283315603/My Drive/zotero/Huth et al. - 2016 - Natural speech reveals the semantic maps that tile.pdf:application/pdf},
+}
+
+@article{lebel_natural_2023,
+	title = {A natural language {fMRI} dataset for voxelwise encoding models},
+	volume = {10},
+	copyright = {2023 The Author(s)},
+	issn = {2052-4463},
+	url = {https://www.nature.com/articles/s41597-023-02437-z},
+	doi = {10.1038/s41597-023-02437-z},
+	abstract = {Speech comprehension is a complex process that draws on humans’ abilities to extract lexical information, parse syntax, and form semantic understanding. These sub-processes have traditionally been studied using separate neuroimaging experiments that attempt to isolate specific effects of interest. More recently it has become possible to study all stages of language comprehension in a single neuroimaging experiment using narrative natural language stimuli. The resulting data are richly varied at every level, enabling analyses that can probe everything from spectral representations to high-level representations of semantic meaning. We provide a dataset containing BOLD fMRI responses recorded while 8 participants each listened to 27 complete, natural, narrative stories ({\textasciitilde}6 hours). This dataset includes pre-processed and raw MRIs, as well as hand-constructed 3D cortical surfaces for each participant. To address the challenges of analyzing naturalistic data, this dataset is accompanied by a python library containing basic code for creating voxelwise encoding models. Altogether, this dataset provides a large and novel resource for understanding speech and language processing in the human brain.},
+	language = {en},
+	number = {1},
+	urldate = {2024-09-13},
+	journal = {Scientific Data},
+	author = {LeBel, Amanda and Wagner, Lauren and Jain, Shailee and Adhikari-Desai, Aneesh and Gupta, Bhavin and Morgenthal, Allyson and Tang, Jerry and Xu, Lixiang and Huth, Alexander G.},
+	month = aug,
+	year = {2023},
+	note = {Publisher: Nature Publishing Group},
+	keywords = {Cortex, encoding models, fMRI, Language, Neural encoding},
+	pages = {555},
+}
+
+@misc{lebel_fmri_2023,
+	title = {An {fMRI} dataset during a passive natural language listening task},
+	url = {https://openneuro.org/datasets/ds003020/versions/2.0.0},
+	doi = {10.18112/OPENNEURO.DS003020.V2.0.0},
+	urldate = {2024-09-13},
+	publisher = {Openneuro},
+	author = {LeBel, Amanda and Wagner, Lauren and Jain, Shailee and Adhikari-Desai, Aneesh and {Bhavin Gupta} and Morgenthal, Allyson and Tang, Jerry and {Lixiang Xu} and Huth, Alexander G.},
+	year = {2023},
+}
