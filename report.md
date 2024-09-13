@@ -1,6 +1,13 @@
 ---
 title: Report
 bibliography: library.bib
+authors:
+  - name: Gabriel Kressin Palacios
+    affiliation: jhu
+  - name: Gio Li
+    affiliation: jhu
+  - name: Kristijan Armeni
+    affiliation: jhu
 ---
 
 # Introduction

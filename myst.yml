@@ -9,7 +9,10 @@ project:
     - file: README.md
     - file: report.md
     - file: notebook.ipynb
-  authors: [Gabriel Kressin Palacios, Gio Li, Kristijan Armeni]
+  affiliations:
+    - id: jhu
+      institution: Johns Hopkins University
+      department: Psychological and Brain Sciences
   github: https://github.com/KristijanArmeni/encoders_report
   # To autogenerate a Table of Contents, run "myst init --write-toc"
 site:
