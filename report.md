@@ -45,13 +45,15 @@ For each token in the story, its precomputed 985-dimensional embedding based on 
 :remove-input: false
 ```
 
-**Interpolation**
+**Resampling** To match the sampling frequency of word embeddings and fMRI data for regression, we resampled the stimulus matrix to match the sampling rate of the BOLD data (.5 Hz). Specifically, we transformed the discrete embedding vectors, which are defined only at word times, into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word $T^{word}$. We then convolved this signal with a Lanczos kernel (with parameter $a=3$) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal at the TR times of the fMRI data to create the embeddings matrix used for regression.
 
 ## fMRI preprocessing
 
 We used the already preprocessed fMRI data as shared in by [@lebel_fmri_2023].
 
 ## Regression and cross-validation
+
+**Regression** We implemented a linear ridge regression to map BOLD responses to the word embeddings. 
 
 # Results
 
