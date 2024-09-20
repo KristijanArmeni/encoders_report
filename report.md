@@ -53,7 +53,7 @@ We used the already preprocessed fMRI data as shared in by [@lebel_fmri_2023].
 
 ## Regression and cross-validation
 
-We implemented a linear ridge regression model to map BOLD responses to the word embeddings. Both the embeddings and the BOLD responses were z-scored prior to regression. For each voxel, we estimated a weight vector using RidgeCV, with the regularization parameter $\alpha$ selected from a range of values: $/alpha \in np.logspace(1, 3, 10)$. 
+We implemented a linear ridge regression model to map BOLD responses to the word embeddings. Both the embeddings and the BOLD responses were z-scored prior to regression. For each voxel, we estimated a weight vector using RidgeCV, with the regularization parameter $\alpha$ selected from a range of values: $\alpha \in np.logspace(1, 3, 10)$. 
 
 Cross-validation was performed at the story level to ensure the independence of training and test data. Specifically, we randomly sampled a subset of stories to serve as the training set and held out one randomly selected story as the test dataset in each fold. The performance of the encoding model was quantified by calculating the Pearson correlation between the actual BOLD responses and the predicted BOLD responses for the test story. To obtain a robust estimate of model performance, we repeated this random sampling process multiple times, varying the selection of training and test stories in each iteration. The average performance across these repetitions provided a reliable measure of the encoding model’s performance, reducing the risk of performance being biased by any particular split of the data.
 
