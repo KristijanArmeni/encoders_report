@@ -6,7 +6,6 @@ project:
   # description:
   # keywords: []
   toc:
-    - file: README.md
     - file: report.md
     - file: notebook.ipynb
   affiliations:
