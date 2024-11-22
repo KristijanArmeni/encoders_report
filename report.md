@@ -12,6 +12,11 @@ authors:
 
 # Introduction
 
+We set out to reproduce the results of the encoding model reported in @lebel_natural_2023 and document that process.
+Encoding models are a popular method to make and test predictions about representational spaces in the brain.
+@lebel_natural_2023 published a dataset which contains fMRI BOLD responses of eight participants that listened to 27 natural stories.
+The dataset includes pre-processed fMRI data, cortical surfaces, and transcriptions for the stories and is accompanied by a [repository](https://github.com/HuthLab/deep-fMRI-dataset/tree/1.0.2) for fitting voxelwise encoding models.
+We developed our own code to reproduce the results and documented the process and issues along the way.
 
 
 # Methods
@@ -28,13 +33,6 @@ The code referenced in this report is available in a standalone GitHub repositor
 
 ## Feature preprocessing
 
-### Audio envelope 
-
-Audio envelope was computed by taking the absolute value of the hilbert transformed wavfile data.
-For each story, the envelope was trimmed at the end by dropping the final 10 TR's as implemented in
-[features.trim()](https://github.com/GabrielKP/enc/blob/d34c32678647360339657225eeaea0e44801e4fc/src/features.py#L19)
-method. The trimmed envelope was then downsampled to match the number of TRs in the fMRI data. All the steps are implemented in the [load_envelope_data()](https://github.com/GabrielKP/enc/blob/d34c32678647360339657225eeaea0e44801e4fc/src/main.py#L24) method.
-
 ### Word embeddings
 
 For each token in the story, its precomputed 985-dimensional embedding based on word co-ocurrences [@huth_natural_2016] were extracted from the [english1000sm.hfpy](https://github.com/OpenNeuroDatasets/ds003020/blob/main/derivative/english1000sm.hf5) data matrix, available in the OpenNeuro repository. If a story token was not available in the precomputed vocabulary, we filled that embedding with a zeros vector. The output of this step is a $N^{tokens} \times N^{dim}$ matrix of word embeddings.
@@ -46,6 +44,14 @@ For each token in the story, its precomputed 985-dimensional embedding based on 
 ```
 
 **Resampling** To match the sampling frequency of word embeddings and fMRI data for regression, we resampled the stimulus matrix to match the sampling rate of the BOLD data (.5 Hz). Specifically, we transformed the discrete embedding vectors, which are defined only at word times, into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word $T^{word}$. We then convolved this signal with a Lanczos kernel (with parameter $a=3$) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal at the TR times of the fMRI data to create the embeddings matrix used for regression.
+
+### Audio envelope
+
+Audio envelope was computed by taking the absolute value of the hilbert transformed wavfile data.
+For each story, the envelope was trimmed at the end by dropping the final 10 TR's as implemented in
+[features.trim()](https://github.com/GabrielKP/enc/blob/d34c32678647360339657225eeaea0e44801e4fc/src/features.py#L19)
+method. The trimmed envelope was then downsampled to match the number of TRs in the fMRI data. All the steps are implemented in the [load_envelope_data()](https://github.com/GabrielKP/enc/blob/d34c32678647360339657225eeaea0e44801e4fc/src/main.py#L24) method.
+
 
 ## fMRI preprocessing
 
@@ -62,4 +68,14 @@ Cross-validation was performed at the story level to ensure the independence of 
 ## Acoustic encoding model
 
 
-## Semantic encoding model 
+## Semantic encoding model
+
+
+# Discussion
+
+
+
+# List of challenges
+
+* Alignment
+* Parameters for plots in paper
