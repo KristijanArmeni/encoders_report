@@ -65,11 +65,19 @@ Cross-validation was performed at the story level to ensure the independence of 
 
 # Results
 
-## Acoustic encoding model
-
-
 ## Semantic encoding model
 
+```{figure} fig/embeddings_performance.png
+:label: fig-embedding
+Test-set performance of the embeddings model.
+```
+
+## Audio envelope encoding model
+
+```{figure} fig/envelope_performance.png
+:label: fig-envelope
+Test-set performance of the audio encoding model.
+```
 
 # Discussion
 
