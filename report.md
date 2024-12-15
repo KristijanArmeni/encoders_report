@@ -1,22 +1,29 @@
 ---
-title: Report
+title: "Report: Encoding Model Reproduction"
 bibliography: library.bib
 authors:
+  - name: Kristijan Armeni
+    affiliation: jhu
   - name: Gabriel Kressin Palacios
     affiliation: jhu
   - name: Gio Li
     affiliation: jhu
-  - name: Kristijan Armeni
-    affiliation: jhu
 ---
+
+<!-- *[Documentation](https://github.com/GabrielKP/enc/)* -->
 
 # Introduction
 
-We set out to reproduce the results of the encoding model reported in @lebel_natural_2023 and document that process.
+We reproduced fitting the encoding model reported in @lebel_natural_2023.
+We developed a repository to load data, compute features, and fit an encoding model to the dataset published by @lebel_natural_2023.
 Encoding models are a popular method to make and test predictions about representational spaces in the brain.
-@lebel_natural_2023 published a dataset which contains fMRI BOLD responses of eight participants that listened to 27 natural stories.
-The dataset includes pre-processed fMRI data, cortical surfaces, and transcriptions for the stories and is accompanied by a [repository](https://github.com/HuthLab/deep-fMRI-dataset/tree/1.0.2) for fitting voxelwise encoding models.
-We developed our own code to reproduce the results and documented the process and issues along the way.
+The dataset contains pre-processed fMRI BOLD responses of eight participants that listened to 27 natural stories, their cortical surfaces, transcriptions for the stories.
+It is accompanied by a repository to fit an encoding model[^lebel_code_repository], which we partly based our code on.
+We fitted an encoding model with time-smoothed word vectors reproducing [Fig. 3B and 3E](https://www.nature.com/articles/s41597-023-02437-z/figures/3), and additionally fit an encoding model to the audio envelope.
+
+
+[^lebel_code_repository]: https://github.com/HuthLab/deep-fMRI-dataset
+
 
 
 # Methods
@@ -27,7 +34,7 @@ The dataset used for this report was described in @lebel_natural_2023 and is ava
 
 ## Code
 
-The code referenced in this report is available in a standalone GitHub repository[^github_repo].
+The code and its [documentation](https://gabrielkp.com/enc/) is available in a standalone GitHub repository[^github_repo].
 
 [^github_repo]: https://github.com/GabrielKP/enc/
 
@@ -59,9 +66,17 @@ We used the already preprocessed fMRI data as shared in by [@lebel_fmri_2023].
 
 ## Regression and cross-validation
 
-We implemented a linear ridge regression model to map BOLD responses to the word embeddings. Both the embeddings and the BOLD responses were z-scored prior to regression. For each voxel, we estimated a weight vector using RidgeCV, with the regularization parameter $\alpha$ selected from a range of values: $\alpha \in np.logspace(1, 3, 10)$. 
+We used the ridge regression model in the accompanying code [^lebel_code_repository] from [@lebel_fmri_2023].
+We previously implemented the ridge regression model using [RidgeCV from scipy](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), however the model fit significantly worse.
+The ridge regression model mapped BOLD responses to the word embeddings.
+Both the embeddings and the BOLD responses were z-scored prior to regression.
+For each voxel the regression first optimized the $\alpha \in np.logspace(1, 3, 10)$, and computed the correlations between the predicted and the actual response using the best weight vector.
 
-Cross-validation was performed at the story level to ensure the independence of training and test data. Specifically, we randomly sampled a subset of stories to serve as the training set and held out one randomly selected story as the test dataset in each fold. The performance of the encoding model was quantified by calculating the Pearson correlation between the actual BOLD responses and the predicted BOLD responses for the test story. To obtain a robust estimate of model performance, we repeated this random sampling process multiple times, varying the selection of training and test stories in each iteration. The average performance across these repetitions provided a reliable measure of the encoding model’s performance, reducing the risk of performance being biased by any particular split of the data.
+Cross-validation was performed at the story level to ensure the independence of training and test data.
+Specifically, we randomly sampled a subset of stories to serve as the training set and held out one constant story as the test dataset in each fold.
+The performance of the encoding model was quantified by calculating the Pearson correlation between the actual BOLD responses and the predicted BOLD responses for the test story.
+To obtain a robust estimate of model performance, we repeated this random sampling process multiple times, varying the selection of training and test stories in each iteration.
+The average performance across these repetitions provided a reliable measure of the encoding model’s performance, reducing the risk of performance being biased by any particular split of the data.
 
 # Results
 
