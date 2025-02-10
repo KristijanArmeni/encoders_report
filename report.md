@@ -1,5 +1,5 @@
 ---
-title: "Report: Encoding Model Reproduction"
+title: "Reproducing neuroscience analyses through collaborative open source tools and practices"
 bibliography: library.bib
 authors:
   - name: Kristijan Armeni
@@ -14,7 +14,9 @@ authors:
 
 # Introduction
 
-We reproduced fitting the encoding model reported in @lebel_natural_2023.
+Computational tools are becoming an indispenible ingredient of contemporary science. This holds as well for cognitive computational neuroscience which has long relied on computing-intensive techniques to model human brain responses to various perceptual and cognitive tasks [@naselaris_encoding_2011; @holdgraf_encoding_2017; @naselaris_cognitive_2018].
+
+Here, we set out to reproduce encoding models reported in @lebel_natural_2023.
 We developed a repository to load data, compute features, and fit an encoding model to the dataset published by @lebel_natural_2023.
 Encoding models are a popular method to make and test predictions about representational spaces in the brain.
 The dataset contains pre-processed fMRI BOLD responses of eight participants that listened to 27 natural stories, their cortical surfaces, transcriptions for the stories.
@@ -24,13 +26,11 @@ We fitted an encoding model with time-smoothed word vectors reproducing [Fig. 3B
 
 [^lebel_code_repository]: https://github.com/HuthLab/deep-fMRI-dataset
 
-
-
 # Methods
 
 ## Dataset
 
-The dataset used for this report was described in @lebel_natural_2023 and is available in the OpenNeuro repository [@lebel_fmri_2023].
+The dataset used for this report was described in @lebel_natural_2023 and is available in the OpenNeuro repository [@lebel_fmri_2023]. For computational and resource reasons, this reports focuses on a subset of results for one participant (`UTS02`). This specific participant dataset was chosen because the original report indicated it contained one of the best quality data based on the encoding model results reported by @lebel_fmri_2023. 
 
 ## Code
 
@@ -40,6 +40,7 @@ The code and its [documentation](https://gabrielkp.com/enc/) is available in a s
 
 ## Feature preprocessing
 
+(methods-embeddings-model)=
 ### Word embeddings
 
 For each token in the story, its precomputed 985-dimensional embedding based on word co-ocurrences [@huth_natural_2016] were extracted from the [english1000sm.hfpy](https://github.com/OpenNeuroDatasets/ds003020/blob/main/derivative/english1000sm.hf5) data matrix, available in the OpenNeuro repository. If a story token was not available in the precomputed vocabulary, we filled that embedding with a zeros vector. The output of this step is a $N^{tokens} \times N^{dim}$ matrix of word embeddings.
@@ -48,6 +49,7 @@ For each token in the story, its precomputed 985-dimensional embedding based on 
 
 **Resampling** To match the sampling frequency of word embeddings and fMRI data for regression, we resampled the stimulus matrix to match the sampling rate of the BOLD data (.5 Hz). Specifically, we transformed the discrete embedding vectors, which are defined only at word times, into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word $T^{word}$. We then convolved this signal with a Lanczos kernel (with parameter $a=3$) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal at the TR times of the fMRI data to create the embeddings matrix used for regression.
 
+(methods-audio-model)=
 ### Audio envelope
 
 Audio envelope was computed by taking the absolute value of the hilbert transformed wavfile data.
@@ -76,25 +78,35 @@ The average performance across these repetitions provided a reliable measure of 
 
 # Results
 
+Below, we report results for two fMRI encoding models: based on [distributional word embeddings](#methods-embeddings-model) and based on [audio envelope](#methods-audio-model).
+
 ## Semantic encoding model
 
-```{figure} fig/embeddings_performance.png
+In [](#fig-embedding) we show the test-set correlation results ( across the whole brain for participant `UTS02`. The highest performance is achieved with 20 training stories. The best performing voxels are in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report [@lebel_fmri_2023]. The best performing voxels showed correlation values of ~0.35, which is lower than in the original report where highest scores reach a correlation of ~0.7. That is, our models pick up on the signal in the relevant brain areas, they are underporfming relative to original results.
+
+```{figure} fig/lebel_regression/embedding_performance.png
 :label: fig-embedding
-Test-set performance of the embeddings model.
+:width: 100%
+Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.)
 ```
 
-## Audio envelope encoding model
+## Sensory encoding model
 
-```{figure} fig/envelope_performance.png
+To additionally benchmark the word embedding model results, we developed a simpler fMRI encoding model based on just the instantanous envelope of the acoustic energy at word onsets. [](#fig-envelope) displays the results. We see that compared to the semantic model ([](#fig-embedding)), the performance is spatially narrower and predominantly capuring signal in on the primary auditory cortex (labeled AC) as expected by a low-level sensory model.
+
+
+```{figure} fig/lebel_regression/envelope_performance.png
 :label: fig-envelope
-Test-set performance of the audio encoding model.
+Test-set performance of the audio encoding model. The peak performance is observed in auditory cortex (AC).
 ```
 
-# Discussion
+## Model performance with increasing training set size
 
+@lebel_fmri_2023 report that in general model performance on test sets increases as the amount of training set (number of stories used to fit the model) increases. We sought to establish that this hold for our pipeline and the two encoding models.
 
+```{figure} fig/lebel_regression/training_curve.png
+:width: 80%
+:label: fig-training-curve
+Test-set performance with increasing trainin set size (i.e. number of stories) for dataset UTS02.
+```
 
-# List of challenges
-
-* Alignment
-* Parameters for plots in paper
