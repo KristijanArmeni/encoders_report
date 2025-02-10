@@ -1,4 +1,36 @@
 
+@article{naselaris_encoding_2011,
+	series = {Multivariate {Decoding} and {Brain} {Reading}},
+	title = {Encoding and decoding in {fMRI}},
+	volume = {56},
+	issn = {1053-8119},
+	url = {http://www.sciencedirect.com/science/article/pii/S1053811910010657},
+	doi = {10.1016/j.neuroimage.2010.07.073},
+	abstract = {Over the past decade fMRI researchers have developed increasingly sensitive techniques for analyzing the information represented in BOLD activity. The most popular of these techniques is linear classification, a simple technique for decoding information about experimental stimuli or tasks from patterns of activity across an array of voxels. A more recent development is the voxel-based encoding model, which describes the information about the stimulus or task that is represented in the activity of single voxels. Encoding and decoding are complementary operations: encoding uses stimuli to predict activity while decoding uses activity to predict information about the stimuli. However, in practice these two operations are often confused, and their respective strengths and weaknesses have not been made clear. Here we use the concept of a linearizing feature space to clarify the relationship between encoding and decoding. We show that encoding and decoding operations can both be used to investigate some of the most common questions about how information is represented in the brain. However, focusing on encoding models offers two important advantages over decoding. First, an encoding model can in principle provide a complete functional description of a region of interest, while a decoding model can provide only a partial description. Second, while it is straightforward to derive an optimal decoding model from an encoding model it is much more difficult to derive an encoding model from a decoding model. We propose a systematic modeling approach that begins by estimating an encoding model for every voxel in a scan and ends by using the estimated encoding models to perform decoding.},
+	number = {2},
+	urldate = {2018-02-16},
+	journal = {NeuroImage},
+	author = {Naselaris, Thomas and Kay, Kendrick N. and Nishimoto, Shinji and Gallant, Jack L.},
+	month = may,
+	year = {2011},
+	keywords = {computational neuroscience, decoding, encoding, fMRI, project.lstmMEG, read},
+	pages = {400--410},
+}
+
+@article{holdgraf_encoding_2017,
+	title = {Encoding and decoding models in cognitive electrophysiology},
+	volume = {11},
+	issn = {1662-5137},
+	url = {http://journal.frontiersin.org/article/10.3389/fnsys.2017.00061/full},
+	doi = {10.3389/fnsys.2017.00061},
+	urldate = {2018-06-25},
+	journal = {Frontiers in Systems Neuroscience},
+	author = {Holdgraf, Christopher R. and Rieger, Jochem W. and Micheli, Cristiano and Martin, Stephanie and Knight, Robert T. and Theunissen, Frederic E.},
+	month = sep,
+	year = {2017},
+	keywords = {decoding models, ecoding models, EEG, MEG, project.lstmMEG, project.vsmMEG, readme},
+}
+
 @article{huth_natural_2016,
 	title = {Natural speech reveals the semantic maps that tile human cerebral cortex},
 	volume = {532},
@@ -13,37 +45,57 @@
 	author = {Huth, Alexander G. and Heer, Wendy A. de and Griffiths, Thomas L. and Theunissen, Frédéric E. and Gallant, Jack L.},
 	month = apr,
 	year = {2016},
-	keywords = {computational neuroscience, fixme, fMRI, project.lstmMEG, project.vsmMEG, readme, semantics},
+	keywords = {fMRI, project.lstmMEG, readme, project.vsmMEG, fixme, computational neuroscience, semantics},
 	pages = {453},
-	annote = {Summary and comment
-Huth et al (2016) used word co-occurrence statistics to determine vector space representations of words that capture statistical patterning of each individual word in the story. They recorded fMRI while participants listened to over 2 hours of narratives. They say that "semantic selectivity of most regions is unknown" as their motivation to do this. They then investigated the "semantic tuning" of each voxel by applying a PCA to the estimated models. They also used an algorithm to create a single atlas based on data from all subjects. 
-The discussion has a good \$ to it, but is unfortunately empty of intellectual contributions.
-Comment
-
-They used a 985 dim feature space
-they apparently scrapped the corpus themselves
-nuisance var: word rate, phoneme rate, phonemes
-ridge regression, like TFR
-
-The way they estimate "semantic tuning" or the way Berezutskaya et al (2017) estimate the "tuning profiles" is how you should go about determining "temporal tuning profiles".
-The question could be "How do these semantic features, when aggregated into higher order categories" module temporal profile of responses.},
-	annote = {TEMPLATE
-Background
- 
-Problem/question
- 
-Hypothesis
- 
-Stimuli
- 
-Measurement
- 
-Data analysis
- 
-Key result
- 
-Conclusion},
 	file = {Huth et al. - 2016 - Natural speech reveals the semantic maps that tile.pdf:/Volumes/GoogleDrive-100121059175283315603/My Drive/zotero/Huth et al. - 2016 - Natural speech reveals the semantic maps that tile.pdf:application/pdf},
+}
+
+@article{naselaris_cognitive_2018,
+	title = {Cognitive computational neuroscience: {A} new conference for an emerging discipline},
+	issn = {13646613},
+	shorttitle = {Cognitive {Computational} {Neuroscience}},
+	doi = {10.1016/j.tics.2018.02.008},
+	language = {en},
+	urldate = {2018-03-24},
+	journal = {Trends in Cognitive Sciences},
+	author = {Naselaris, Thomas and Bassett, Danielle S. and Fletcher, Alyson K. and Kording, Konrad and Kriegeskorte, Nikolaus and Nienborg, Hendrikje and Poldrack, Russell A. and Shohamy, Daphna and Kay, Kendrick},
+	month = feb,
+	year = {2018},
+	keywords = {read},
+}
+
+@book{forstmann_introduction_2015,
+	address = {New York, NY},
+	title = {An {Introduction} to model-based cognitive neuroscience},
+	isbn = {978-1-4939-2235-2 978-1-4939-2236-9},
+	url = {http://link.springer.com/10.1007/978-1-4939-2236-9},
+	language = {en},
+	urldate = {2019-07-04},
+	publisher = {Springer New York},
+	editor = {Forstmann, Birte U. and Wagenmakers, Eric-Jan},
+	year = {2015},
+	doi = {10.1007/978-1-4939-2236-9},
+	keywords = {computational cognitive neuroscience, model-based},
+}
+
+@article{dupre_beyond_2022,
+	title = {Beyond advertising: {New} infrastructures for publishing integrated research objects},
+	volume = {18},
+	issn = {1553-7358},
+	shorttitle = {Beyond advertising},
+	url = {https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009651},
+	doi = {10.1371/journal.pcbi.1009651},
+	language = {en},
+	number = {1},
+	urldate = {2023-10-24},
+	journal = {PLOS Computational Biology},
+	author = {DuPre, Elizabeth and Holdgraf, Chris and Karakuzu, Agah and Tetrel, Loïc and Bellec, Pierre and Stikov, Nikola and Poline, Jean-Baptiste},
+	month = jan,
+	year = {2022},
+	note = {Publisher: Public Library of Science},
+	keywords = {Jupyter notebook, open data, open science, python, reproducibility, Rmarkdown},
+	pages = {e1009651},
+	file = {Full Text PDF:/Users/kriarm/Zotero/storage/4KBZM4TE/DuPre et al. - 2022 - Beyond advertising New infrastructures for publis.pdf:application/pdf},
 }
 
 @article{lebel_natural_2023,
@@ -62,7 +114,7 @@ Conclusion},
 	month = aug,
 	year = {2023},
 	note = {Publisher: Nature Publishing Group},
-	keywords = {Cortex, encoding models, fMRI, Language, Neural encoding},
+	keywords = {Language, fMRI, encoding models, Cortex, Neural encoding},
 	pages = {555},
 }
 
