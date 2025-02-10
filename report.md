@@ -84,7 +84,7 @@ Below, we report results for two fMRI encoding models: based on [distributional 
 
 In [](#fig-embedding) we show the test-set correlation results ( across the whole brain for participant `UTS02`. The highest performance is achieved with 20 training stories. The best performing voxels are in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report [@lebel_fmri_2023]. The best performing voxels showed correlation values of ~0.35, which is lower than in the original report where highest scores reach a correlation of ~0.7. That is, our models pick up on the signal in the relevant brain areas, they are underporfming relative to original results.
 
-```{figure} fig/huth_regression/embedding_performance.png
+```{figure} fig/lebel_regression/embedding_performance.png
 :label: fig-embedding
 :width: 100%
 Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.)
@@ -95,7 +95,7 @@ Test-set performance of the embeddings model with different training set sizes. 
 To additionally benchmark the word embedding model results, we developed a simpler fMRI encoding model based on just the instantanous envelope of the acoustic energy at word onsets. [](#fig-envelope) displays the results. We see that compared to the semantic model ([](#fig-embedding)), the performance is spatially narrower and predominantly capuring signal in on the primary auditory cortex (labeled AC) as expected by a low-level sensory model.
 
 
-```{figure} fig/huth_regression/envelope_performance.png
+```{figure} fig/lebel_regression/envelope_performance.png
 :label: fig-envelope
 Test-set performance of the audio encoding model. The peak performance is observed in auditory cortex (AC).
 ```
@@ -104,7 +104,7 @@ Test-set performance of the audio encoding model. The peak performance is observ
 
 @lebel_fmri_2023 report that in general model performance on test sets increases as the amount of training set (number of stories used to fit the model) increases. We sought to establish that this hold for our pipeline and the two encoding models.
 
-```{figure} fig/huth_regression/training_curve.png
+```{figure} fig/lebel_regression/training_curve.png
 :width: 80%
 :label: fig-training-curve
 Test-set performance with increasing trainin set size (i.e. number of stories) for dataset UTS02.
