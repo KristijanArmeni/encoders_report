@@ -14,15 +14,14 @@ authors:
 
 # Introduction
 
-Computational tools are becoming an indispenible ingredient of contemporary science. This holds as well for cognitive computational neuroscience which has long relied on computing-intensive techniques to model human brain responses to various perceptual and cognitive tasks [@naselaris_encoding_2011; @holdgraf_encoding_2017; @naselaris_cognitive_2018].
+Computational tools are becoming an indispenible ingredient of contemporary science. This holds as well for cognitive computational neuroscience which has long relied on compute-intensive methods to model human brain responses in various perceptual and cognitive tasks [@naselaris_encoding_2011; @holdgraf_encoding_2017; @naselaris_cognitive_2018].
 
 Here, we set out to reproduce encoding models reported in @lebel_natural_2023.
 We developed a repository to load data, compute features, and fit an encoding model to the dataset published by @lebel_natural_2023.
-Encoding models are a popular method to make and test predictions about representational spaces in the brain.
-The dataset contains pre-processed fMRI BOLD responses of eight participants that listened to 27 natural stories, their cortical surfaces, transcriptions for the stories.
+Encoding models are a popular method to make and test predictions about representational spaces in the brain [@naselaris_encoding_2011].
+The dataset contains pre-processed fMRI BOLD responses of eight participants that listened to 27 natural stories, their cortical surfaces, and transcriptions for the stories.
 It is accompanied by a repository to fit an encoding model[^lebel_code_repository], which we partly based our code on.
 We fitted an encoding model with time-smoothed word vectors reproducing [Fig. 3B and 3E](https://www.nature.com/articles/s41597-023-02437-z/figures/3), and additionally fit an encoding model to the audio envelope.
-
 
 [^lebel_code_repository]: https://github.com/HuthLab/deep-fMRI-dataset
 
@@ -34,7 +33,7 @@ The dataset used for this report was described in @lebel_natural_2023 and is ava
 
 ## Code
 
-The code and its [documentation](https://gabrielkp.com/enc/) is available in a standalone GitHub repository[^github_repo].
+The code and its [documentation](https://gabrielkp.com/enc/) is available in a standalone GitHub repository[^github_repo]. Our approach can be dubbed `same-data-different-code` meaning that we used the original, published data and that we implemented our the same analysis using (in most parts) our own code, rather than used the original experiment code.
 
 [^github_repo]: https://github.com/GabrielKP/enc/
 
@@ -78,22 +77,21 @@ The average performance across these repetitions provided a reliable measure of 
 
 # Results
 
-Below, we report results for two fMRI encoding models: based on [distributional word embeddings](#methods-embeddings-model) and based on [audio envelope](#methods-audio-model).
+Below, we report results for two fMRI encoding models: based on [distributional word embeddings](#methods-embeddings-model) ('semantic model') and based on [audio envelope](#methods-audio-model) ('sensory model').
 
 ## Semantic encoding model
 
-In [](#fig-embedding) we show the test-set correlation results ( across the whole brain for participant `UTS02`. The highest performance is achieved with 20 training stories. The best performing voxels are in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report [@lebel_fmri_2023]. The best performing voxels showed correlation values of ~0.35, which is lower than in the original report where highest scores reach a correlation of ~0.7. That is, our models pick up on the signal in the relevant brain areas, they are underporfming relative to original results.
+In [](#fig-embedding) we show the test-set correlation results across the whole brain for participant `UTS02`. The highest performance is achieved with with the largest traininset (20 training stories). The best performing voxels are found in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report [@lebel_fmri_2023]. The best performing voxels showed correlation values of ~0.35, which is lower than in the original report where highest scores reach a correlation of ~0.7. That is, our models pick up on the signal in the relevant brain areas, they are underporfming relative to original results.
 
 ```{figure} fig/lebel_regression/embedding_performance.png
 :label: fig-embedding
 :width: 100%
-Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.)
+Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.
 ```
 
 ## Sensory encoding model
 
-To additionally benchmark the word embedding model results, we developed a simpler fMRI encoding model based on just the instantanous envelope of the acoustic energy at word onsets. [](#fig-envelope) displays the results. We see that compared to the semantic model ([](#fig-embedding)), the performance is spatially narrower and predominantly capuring signal in on the primary auditory cortex (labeled AC) as expected by a low-level sensory model.
-
+To additionally our benchmark semantic model results, we implemented a simpler fMRI encoding model based on just the instantaneous envelope of the acoustic energy around word onsets. Our guiding expectation was that such a model would show spatially differnent patterns from from the more complex and statistically powerful semantic encoding model. [](#fig-envelope) displays the results. We see that compared to the semantic model ([](#fig-embedding)), the performance is has a much n arrower spatial extent and predominantly capures signal surrounding the primary auditory cortex (labeled AC) as expected by a low-level sensory model.
 
 ```{figure} fig/lebel_regression/envelope_performance.png
 :label: fig-envelope
@@ -102,11 +100,12 @@ Test-set performance of the audio encoding model. The peak performance is observ
 
 ## Model performance with increasing training set size
 
-@lebel_fmri_2023 report that in general model performance on test sets increases as the amount of training set (number of stories used to fit the model) increases. We sought to establish that this hold for our pipeline and the two encoding models.
+@lebel_fmri_2023 report that in general test-set performance increases with the increasing training set size (i.e. number of stories used to fit the model) increases. We sought to establish that the same trend holds for our pipeline and the two encoding models. We fit models for $N \in \{1, 3, 5, 7, 9, 11, 12, 15, 20\}$ stories. Results are shown in [](#fig-training-curve). 
+
+The results confirm the increase in performance with more training data, however as noted above, our model undeperforms relative to published results exhibting lower correlation scores over all.
 
 ```{figure} fig/lebel_regression/training_curve.png
 :width: 80%
 :label: fig-training-curve
 Test-set performance with increasing trainin set size (i.e. number of stories) for dataset UTS02.
 ```
-
