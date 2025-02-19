@@ -14,14 +14,25 @@ authors:
 
 # Introduction
 
-Computational tools are becoming an indispenible ingredient of contemporary science. This holds as well for cognitive computational neuroscience which has long relied on compute-intensive methods to model human brain responses in various perceptual and cognitive tasks [@naselaris_encoding_2011; @holdgraf_encoding_2017; @naselaris_cognitive_2018].
+Computational tools are an indispenible part of contemporary science. Concurrently, computational reproducibility -- the ability for a different research team reproducing the original results given the original research artifacts -- has been recognized as a core standard for evaluating scientific claims [@claerbout_electronic_1992; @peng_reproducible_2009]. This holds as well for cognitive computational neuroscience which relies on compute-intensive methods for analyzing and modeling datasets of human brain responses during various perceptual and cognitive tasks [@naselaris_cognitive_2018]. As scientific insights increasingly depend on sophisticated and complex computational techniques, tools, and resources, researchers are encouraged to deliver robust and reproducible research artficats such as data, code, and documentation in addition to written reports [@donoho_invitation_2010; @peng_reproducible_2011; @sandve_ten_2013; @dupre_beyond_2022].
 
-Here, we set out to reproduce encoding models reported in @lebel_natural_2023.
-We developed a repository to load data, compute features, and fit an encoding model to the dataset published by @lebel_natural_2023.
-Encoding models are a popular method to make and test predictions about representational spaces in the brain [@naselaris_encoding_2011].
-The dataset contains pre-processed fMRI BOLD responses of eight participants that listened to 27 natural stories, their cortical surfaces, and transcriptions for the stories.
+In computational neuroscience, machine learning methods are commonly used to make and test predictions about the kind of stimulus features (based on descriptions of stimuli or theoretical considerations) elicit and shape responses in the brain.
+Statistical models that allow us to predict brain activity on the basis of stimuli presented to participants are known as encoding models [@naselaris_encoding_2011; @holdgraf_encoding_2017].[^decoding_models]
+Encoding models can be used to answer basic scientific questions about the brain function [@kriegeskorte_cognitive_2018; @doerig_neuroconnectionist_2023] or to build clinical applications such as speech prostheses [@silva_speech_2024].
+
+[^decoding_models]: Statistical mapping can also be performed in reverse direction by predicting classes or properties of stimuli on the basis of brain activity, in which case such statistical models are called 'decoding models'.
+
+The prominence of machine learning and other computational approaches in neuroscience has resulted in a need for dedicated high-quality brain datasets that can be used for model training [e.g. @schoffelen_204-subject_2019; @armeni_10-hour_2022; @lebel_fmri_2023], data standards for sharing [@poldrack_making_2014; @gorgolewski_brain_2016], and targeted efforts towards identifying the barriers and solutions for reproducibility [@poldrack_computational_2019; @botvinik-nezer_variability_2020].
+
+Here, we set out to reproduce the evaluation results for fMRI encoding models reported in a publicly-released datased @lebel_natural_2023. The goals of the project were two-fold:
+
+1. To learn hwo to implement a novel analysis method by reproducing a set of published results in computational neuroscience.
+2. To do so while adopting a set of software development practices and using a suite of open-source analysis and publishing tools.  
+
+We developed a repository to load data, compute features, and fit an encoding model to the dataset published by @lebel_natural_2023. The dataset contains pre-processed fMRI BOLD responses of eight participants that listened to 27 natural stories, their cortical surfaces, and transcriptions for the stories.
 It is accompanied by a repository to fit an encoding model[^lebel_code_repository], which we partly based our code on.
 We fitted an encoding model with time-smoothed word vectors reproducing [Fig. 3B and 3E](https://www.nature.com/articles/s41597-023-02437-z/figures/3), and additionally fit an encoding model to the audio envelope.
+
 
 [^lebel_code_repository]: https://github.com/HuthLab/deep-fMRI-dataset
 
