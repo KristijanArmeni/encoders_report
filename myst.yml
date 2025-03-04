@@ -7,7 +7,7 @@ project:
   # keywords: []
   toc:
     - file: report.md
-  #  - file: notebook.ipynb
+    - file: notebook.ipynb
   #  - url: "https://gabrielkp.com/enc/"
   # does not work at the moment: https://github.com/jupyter-book/mystmd/issues/1445
   affiliations:
