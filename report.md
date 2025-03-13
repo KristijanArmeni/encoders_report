@@ -88,36 +88,44 @@ The average performance across these repetitions provided a reliable measure of 
 
 # Results
 
-Below, we report results for two fMRI encoding models: based on [distributional word embeddings](#methods-embeddings-model) ('semantic model') and based on [audio envelope](#methods-audio-model) ('sensory model').
-
-## Semantic encoding model
-
-In [](#fig-embedding) we show the test-set correlation results across the whole brain for participant `UTS02`. The highest performance is achieved with with the largest traininset (20 training stories). The best performing voxels are found in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report [@lebel_fmri_2023]. The best performing voxels showed correlation values of ~0.35, which is lower than in the original report where highest scores reach a correlation of ~0.7. That is, our models pick up on the signal in the relevant brain areas, they are underporfming relative to original results.
-
-
-```{figure} #cell.fig.embeddings
-:label: fig-embedding
-
-Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.
-```
-
-## Sensory encoding model
-
-To additionally our benchmark semantic model results, we implemented a simpler fMRI encoding model based on just the instantaneous envelope of the acoustic energy around word onsets. Our guiding expectation was that such a model would show spatially differnent patterns from from the more complex and statistically powerful semantic encoding model. [](#fig-envelope) displays the results. We see that compared to the semantic model ([](#fig-embedding)), the performance is has a much n arrower spatial extent and predominantly capures signal surrounding the primary auditory cortex (labeled AC) as expected by a low-level sensory model.
-
-```{figure} #cell.fig.envelope
-:label: fig-envelope
-Test-set performance of the audio encoding model. The peak performance is observed in auditory cortex (AC).
-```
-
 ## Model performance with increasing training set size
 
 @lebel_fmri_2023 report that in general test-set performance increases with the increasing training set size (i.e. number of stories used to fit the model) increases. We sought to establish that the same trend holds for our pipeline and the two encoding models. We fit models for $N \in \{1, 3, 5, 7, 9, 11, 12, 15, 20\}$ stories. Results are shown in [](#fig-training-curve). 
 
 The results confirm the increase in performance with more training data, however as noted above, our model undeperforms relative to published results exhibting lower correlation scores over all.
 
-```{figure} fig/lebel_regression/training_curve.png
+```{figure} #cell.fig.training.curves
 :width: 80%
 :label: fig-training-curve
-Test-set performance with increasing trainin set size (i.e. number of stories) for dataset UTS02.
+Test-set performance with increasing trainin set size (number of stories) for three best performing datasets.
+```
+
+Below, we report results for two fMRI encoding models: based on [distributional word embeddings](#methods-embeddings-model) ('semantic model') and based on [audio envelope](#methods-audio-model) ('sensory model').
+
+## Replication: Semantic encoding model
+
+In [](#fig-embedding) we show the test-set correlation results across the whole brain for participant `UTS02`. The highest performance is achieved with with the largest traininset (20 training stories). The best performing voxels are found in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report [@lebel_fmri_2023]. The best performing voxels showed correlation values of ~0.35, which is lower than in the original report where highest scores reach a correlation of ~0.7. That is, our models pick up on the signal in the relevant brain areas, they are underporfming relative to original results.
+
+
+```{figure} #cell.fig.repli.embeddings
+:label: fig-embedding
+
+Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.
+```
+
+## Reproducibility experiment: Semantic encoding model
+
+```{figure} #cell.fig.repro.embeddings
+:label: fig-embedding
+
+Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.
+```
+
+## Extension experiment: Sensory encoding model
+
+To additionally our benchmark semantic model results, we implemented a simpler fMRI encoding model based on just the instantaneous envelope of the acoustic energy around word onsets. Our guiding expectation was that such a model would show spatially differnent patterns from from the more complex and statistically powerful semantic encoding model. [](#fig-envelope) displays the results. We see that compared to the semantic model ([](#fig-embedding)), the performance is has a much n arrower spatial extent and predominantly capures signal surrounding the primary auditory cortex (labeled AC) as expected by a low-level sensory model.
+
+```{figure} #cell.fig.extension.envelope
+:label: fig-envelope
+Test-set performance of the audio encoding model. The peak performance is observed in auditory cortex (AC).
 ```
