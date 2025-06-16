@@ -84,7 +84,7 @@ We limited our analysis to a subset of three participants ({math}`\textsf{S01, S
 We reasoned that this minimal subset of data would be sufficient to evaluate the reproducibility and replicability of the modeling results.
 
 We accessed the data using the DataLad data management tool [@halchenko_datalad_2021], as recommended by @lebel_natural_2023.
-Time series were available as {file}`.h5p` files for each participant and each story. Following the original report, the first 10 seconds (5 TRs) of each story were trimmed to remove the 10-second silence period before the story began.
+Time series were available as `.h5p` files for each participant and each story. Following the original report, the first 10 seconds (5 TRs) of each story were trimmed to remove the 10-second silence period before the story began.
 
 **Hemodynamic response estimation**  
 The fMRI BOLD responses are thought to represent temporally delayed (on the scale of seconds) and slowly fluctuating components of the underlying local neural activity [@logothetis_underpinnings_2003]. To account for this delayed response, predictor features for timepoint {math}`t` were constructed by concatenating stimulus features from time points {math}`t - 1` to {math}`t - 4` ({math}`n_{\text{delay}}=4`). For timepoints where {math}`t-k<0`, zero vectors were used as padding. This resulted in a predictor matrix {math}`X \in \mathbb{R}^{T\times 4D}`. Although this increases computational cost, it enables the regression model to capture the shape of the hemodynamic response function [@boynton_linear_1996] underlying the BOLD signal.
@@ -146,42 +146,75 @@ The code for the replication and reproducibility experiments and its documentati
 [^enc_repo]: https://github.com/GabrielKP/enc
 
 
+
 # Results
 
-## Model performance with increasing training set size
+## Reproduction experiment
 
-@lebel_fmri_2023 report that in general test-set performance increases with the increasing training set size (i.e. number of stories used to fit the model) increases. We sought to establish that the same trend holds for our pipeline and the two encoding models. We fit models for $N \in \{1, 3, 5, 7, 9, 11, 12, 15, 20\}$ stories. Results are shown in [](#fig-training-curve). 
+We used the original data and code to reproduce the original experimental results.
+The code provided the core regression component, but lacked the capability to reproduce the figures.
+Thus, we ported the code into our own code base.
+To compute the results, we retained the default parameters, except for parameters `nboots`, `chunklen`, and `nchunk`[^parameters] which were set to 20, 10, and 10, respectively (see Table [](#tab:regression_parameters)).
 
-The results confirm the increase in performance with more training data, however as noted above, our model undeperforms relative to published results exhibting lower correlation scores over all.
+[^parameters]: For an explanation of the parameters see the "Code" section of the original paper [@lebel_natural_2023].
 
+**We successfully reproduced published results.** In [](#main_figure)[^icons_attribution], we show the results of our reproduction experiment (panel B) next to originally published figures (panel A).
+Using the shared code and data for the three best performing participants (`S01`, `S02`, `S03`), we were able to reproduce the reported results.
+As in the published results, the highest performing participant was `S03` with the highest average test-set correlation at {math}`r \approx 0.08`, followed by `S02` at {math}`\approx 0.07`, and `S01` at {math}`\approx 0.06`.
 
-Below, we report results for two fMRI encoding models: based on [distributional word embeddings](#methods-embeddings-model) ('semantic model') and based on [audio envelope](#methods-audio-model) ('sensory model').
+**Model performance increased with larger training dataset sizes.**
+Our reproduction further confirmed that model performance depends on the amount of training data available for each participant.
+For the best performing model, performance nearly tripled (from average correlation about 0.03 to 0.09) between the smallest ({math}`N^{\text{stories}} = 1`) and the largest ({math}`N^{\text{stories}} = 25`) training set size.
 
-## Replication: Semantic encoding model
+**Highest performance in the brain areas comprised the language network.** 
+The brain language network consists of multiple areas on the left and right sides behind the temples (temporal cortices), the front (frontal cortex) and the upper middle part (parietal cortex) [@friederici_language_2013; @hagoort_neurobiology_2019; @fedorenko_language_2024].
+Breaking down the average performance across the brain for each voxel for the best performing model (for participant `S02` at {math}`N^{\text{stories}} = 25`, [](#main_figure), panel E), we found, in line with the original report, that the strongest performance was achieved in the left temporal cortex with a peak correlation of about 0.5, followed by areas in the frontal and parietal cortices.
 
-In [](#fig-embedding)[^icons_attribution] we show the test-set correlation results across the whole brain for participant `UTS02`. The highest performance is achieved with with the largest traininset (20 training stories). The best performing voxels are found in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report [@lebel_fmri_2023]. The best performing voxels showed correlation values of ~0.35, which is lower than in the original report where highest scores reach a correlation of ~0.7. That is, our models pick up on the signal in the relevant brain areas, they are underporfming relative to original results.
+## Replication experiment
+
+**We replicated the spatial and training set size effects, but not the effect size.** 
+The results for model performance on example subject are shown in [](#main_figure), Panel C.
+Overall, we managed to reproduce the training set size effects and the broader spatial brain patterns.
+In terms of spatial patterns, the best performing voxels were found in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report and our replication.
+As in the original report, our reproduction results broadly confirmed that the model showed better performance on the held-out story if trained on a larger set containing more training stories.
+However, the effect size obtained with our reproduction pipeline was almost half the size of the original results.
+Our best performing model did not go beyond average performance of 0.05 versus 0.09 for the best performing model in the original report and replication.
+That is, our models capture the language-related brain activity in the relevant brain areas, but they underperformed compared with the original results.
 
 ```{figure} fig/manuscript_figures/figure1-main.svg
 :label: main_figure
-**A-C**: Semantic encoding model performance (whole brain average) per participant with increasing training set sizes. Each line shows mean performance (shaded areas show standard error of the mean across 15 repetitions). **A)** Screen capture of figure published by @lebel_natural_2023 [CC BY 4.0], B) reproduction experiment, and **C)** the replication experiment. **D-F:** The results of the semantic encoding model for one participant (S02). The plots show the test-set performance with 25 training stories for each brain voxel on a flattened two-dimensional brain map. **D)** Figures from the original paper, **E)** for the reproduction experiment, and **F)** for the replication experiment.
+**A-C**: Semantic encoding model performance (whole brain average) per participant with increasing training set sizes. Each line shows mean performance (shaded areas show standard error of the mean across 15 repetitions). **A)** Screen capture of figure published by @lebel_natural_2023 \[CC BY 4.0\], B) reproduction experiment, and **C)** the replication experiment. **D-F:** The results of the semantic encoding model for one participant (S02). The plots show the test-set performance with 25 training stories for each brain voxel on a flattened two-dimensional brain map. **D)** Figures from the original paper, **E)** for the reproduction experiment, and **F)** for the replication experiment.
 
 ```
 
 [^icons_attribution]:  Icons from Flaticon.com: https://www.flaticon.com/free-icons/financial-report, https://www.flaticon.com/free-icons/data, https://www.flaticon.com/free-icons/unstructured-data
 
-## Reproducibility experiment: Semantic encoding model
+### Why did replication results diverge?
 
-```{figure} #cell.fig.repro.embeddings
-:label: fig-embedding
+To assess the discrepancy between the reproduction and replication results, we incorporated the regression function from the original codebase into our replication pipeline ([](#figure_patching), panels A & B).
+This modification substantially improved model performance and successfully recovered the results reported in the original paper and reproduction experiment ([](#figure_patching), Panels C & D).
+Although we did not formally test the contributions of differences between implementations, we identified two crucial distinctions in the original code's regression approach that likely explain the performance improvement: 1) the SVD-based implementation explicitly removed components of the regressor matrix with small singular values; 2) instead of standard k-fold cross-validation, a chunking with bootstrapping strategy [@huth_natural_2016] was employed for hyperparameter optimization.
 
-Test-set performance of the embeddings model with different training set sizes. Brigher color-coded voxels indicate better model performance. Test-set performance (Pearson correlation) is averaged across $N = 15$ independent models that were trained by resampling the training set 15 times.
+```{figure} fig/manuscript_figures/figure2-patching.svg
+:label: figure_patching
+:width: 60%
+
+Replication results were improved after patching our code with regression implementation from @lebel_natural_2023. **A)** The pipeline of our replication used the regression function in [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html) [@pedregosa_scikit-learn:_2011]. **B)** The 'patched' pipeline used the regression function from [Lebel et al.](https://github.com/HuthLab/deep-fMRI-dataset/blob/master/encoding/ridge_utils/ridge.py) **C & D:** Semantic encoding model performance (whole brain average) per participant with increasing training set sizes. Each line shows mean performance (shaded areas show standard error of the mean across 15 repetitions).
 ```
 
-## Extension experiment: Sensory encoding model
+## Extension: Sensory encoding model
 
-To additionally our benchmark semantic model results, we implemented a simpler fMRI encoding model based on just the instantaneous envelope of the acoustic energy around word onsets. Our guiding expectation was that such a model would show spatially differnent patterns from from the more complex and statistically powerful semantic encoding model. [](#fig-envelope) displays the results. We see that compared to the semantic model ([](#fig-embedding)), the performance is has a much n arrower spatial extent and predominantly capures signal surrounding the primary auditory cortex (labeled AC) as expected by a low-level sensory model.
+One of the core motivations behind reproducible computational research is that it should, in principle, allow researchers to easily extend and build on the shared work.
+To further benchmark our replication pipeline, we explored the feasibility of performing a small but meaningful extension to the original semantic encoding model.
+Processing of semantic features in language input is a high-level cognitive process that engages distributed brain networks [@binder_where_2009; @huth_natural_2016].
+As a contrast, we implemented a simpler encoding model based solely on a single one-dimensional acoustic feature of the stimulus, namely, instantaneous fluctuations of the auditory envelope which we termed sensory model.
 
-```{figure} #cell.fig.extension.envelope
-:label: fig-envelope
-Test-set performance of the audio encoding model. The peak performance is observed in auditory cortex (AC).
+In [](#figure_extension) we report the results of the sensory model.
+Compared to the semantic model, it captured activity in a more restricted set of brain areas, with peak performance localized to the auditory cortex (AC) – a sensory area involved in early-stage auditory processing.
+This observation is broadly consistent with prior work, which has repeatedly shown that activity in auditory cortical regions is strongly modulated by low-level acoustic features, while higher-order language processing recruits a more extensive group of regions including temporal, parietal, and frontal cortices [@hickok_cortical_2007].
+
+```{figure} fig/manuscript_figures/figure3-extension.svg
+:label: figure_extension
+
+Sensory model encoding performance showed a narrower set of regions compared to the semantic model. **A)** Acoustic encoding model performance for each participant with increasing training set size (intact and shuffled predictors, shaded areas show standard error of the mean across 15 repetitions). **B)** Voxel-specific performance for `S02`.
 ```
