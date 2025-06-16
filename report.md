@@ -97,7 +97,7 @@ The fMRI BOLD responses are thought to represent temporally delayed (on the scal
 To model brain activity related to aspects of linguistic meaning understanding during story listening, @lebel_natural_2023 used word embeddings --- high-dimensional vectors capturing distributional semantic properties of words based on their co-occurrences in large collections of text [@clark_vector_2015].
 
 **Extracting word embeddings and timings**  
-For each word in the story, we extracted its precomputed 985-dimensional embedding vector [@huth_natural_2016] from the {math}`\textsf{english1000sm.hf5}`[^english1000sm] data matrix (a lookup table) provided by @lebel_natural_2023 and available in the OpenNeuro repository. Words not present in the vocabulary were assigned a zero vector. For every story, this yielded a {math}`\hat{\textbf{X}}_{\textsf{semantic}} \in \mathbb{R}^{N_{\text{words}} \times 985}` matrix of word embeddings for each story where {math}`N_{\text{words}}` are all individual words in a story. The onset and offset times (in seconds) of words were extracted from {file}`*.TextGrid` annotation files[^textgrid] provided with the original dataset.
+For each word in the story, we extracted its precomputed 985-dimensional embedding vector [@huth_natural_2016] from the {math}`\textsf{english1000sm.hf5}`[^english1000sm] data matrix (a lookup table) provided by @lebel_natural_2023 and available in the OpenNeuro repository. Words not present in the vocabulary were assigned a zero vector. For every story, this yielded a {math}`\hat{\textbf{X}}_{\textsf{semantic}} \in \mathbb{R}^{N_{\text{words}} \times 985}` matrix of word embeddings for each story where {math}`N_{\text{words}}` are all individual words in a story. The onset and offset times (in seconds) of words were extracted from {math}`\textsf{*.TextGrid}` annotation files[^textgrid] provided with the original dataset.
 
 [^english1000sm]: https://github.com/OpenNeuroDatasets/ds003020/blob/main/derivative/english1000sm.hf5
 
@@ -113,21 +113,38 @@ The audio envelope was computed by taking the absolute value of the hilbert-tran
 For each story, the envelope was trimmed at the end by dropping the 10 beginning and final seconds.
 The trimmed envelope was then downsampled to the sampling frequency of the fMRI data.
 
+## Ridge regression
 
+To fit a penalized ridge regression model, we used the scikit-learn library [@pedregosa_scikit-learn:_2011], which is a mature library for machine learning with a large user-base and community support.
+Specifically, we used the `RidgeCV()` class which performs a leave-one-out cross-validation to select the best value of the {math}`\alpha` hyperparameter for each target variable (i.e. brain activity time courses in each voxel) prior to fitting the model.
+We set the possible hyperparamater values to {math}`\alpha \in` `np.logspace(1, 3, 10)` as in the original report [@lebel_natural_2023].
+The {math}`\alpha` value that resulted in the highest product-moment correlation coefficient then was used by `RidgeCV()` as the hyperparameter value to fit the model.
 
-## Regression and cross-validation
+## Evaluation
 
-We used the ridge regression model in the accompanying code [^lebel_code_repository] from [@lebel_fmri_2023].
-We previously implemented the ridge regression model using [RidgeCV from scipy](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), however the model fit significantly worse.
-The ridge regression model mapped BOLD responses to the word embeddings.
-Both the embeddings and the BOLD responses were z-scored prior to regression.
-For each voxel the regression first optimized the $\alpha \in np.logspace(1, 3, 10)$, and computed the correlations between the predicted and the actual response using the best weight vector.
+### Cross-validation
 
 Cross-validation was performed at the story level to ensure the independence of training and test data.
-Specifically, we randomly sampled a subset of stories to serve as the training set and held out one constant story as the test dataset in each fold.
-The performance of the encoding model was quantified by calculating the Pearson correlation between the actual BOLD responses and the predicted BOLD responses for the test story.
-To obtain a robust estimate of model performance, we repeated this random sampling process multiple times, varying the selection of training and test stories in each iteration.
-The average performance across these repetitions provided a reliable measure of the encoding model’s performance, reducing the risk of performance being biased by any particular split of the data.
+Specifically, to construct the training set, we randomly sampled without replacement a subset of {math}`N^{\text{train size}}` stories from the {math}`N^{\text{total stories}} = 26` training set pool and held out one constant story (*Where there's smoke*) as the test dataset in each fold.
+This random sampling process was repeated {math}`N^{\text{repeat}} = 15` times, with a new selection of training stories from {math}`N^{\text{total stories}}` in each iteration as described in the original report [@lebel_natural_2023].
+To evaluate the effect of training set size on model performance, we varied {math}`N^{\text{train size}} \in \{1, 3, 5, 7, 9, 11, 13, 15, 19, 21, 23, 25\}`.
+
+The predictor features for the training and test set were z-scored prior to the regression.
+The normalization parameters for z-scoring were only computed from the training set.
+This prevented any statistical information leaking from the test data into our evaluation procedure, maintaining the integrity of the cross-validation procedure.
+
+### Performance metrics
+
+The performance of the encoding model was quantified by calculating the Pearson correlation between the observed BOLD responses and the predicted BOLD responses on the held-out test story.
+Following @lebel_natural_2023 we averaged the encoding model's performance across 15 repetitions. This allows for a more reliable estimate thereby reducing the risk of performance being biased by any particular split of the data.
+
+## Code
+
+All of our analysis and visualization code was implemented in Python 3.12 and the Python scientific stack (NumPy [@harris_array_2020], Pandas [@mckinney_data_2010; @the_pandas_development_team_pandas-devpandas_2024], SciPy [@virtanen_scipy_2020], scikit-learn [@pedregosa_scikit-learn:_2011], matplotlib [@hunter_matplotlib_2007; @the_matplotlib_development_team_matplotlib_2024], seaborn [@waskom_seaborn_2021], pycortex [@gao_pycortex_2015]).
+The code for the replication and reproducibility experiments and its documentation is available at a standalone GitHub repository[^enc_repo].
+
+[^enc_repo]: https://github.com/GabrielKP/enc
+
 
 # Results
 
