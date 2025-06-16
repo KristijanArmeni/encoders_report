@@ -3,6 +3,8 @@ version: 1
 project:
   id: 4790582b-2186-41f1-b522-53cd9027de42
   title:
+  licence:
+    code: MIT
   # description:
   # keywords: []
   toc:
@@ -10,15 +12,31 @@ project:
     - file: notebook.ipynb
   #  - url: "https://gabrielkp.com/enc/"
   # does not work at the moment: https://github.com/jupyter-book/mystmd/issues/1445
+  authors:
+  - name: Gabriel Kressin Palacios
+    affiliation: jhu_pbs
+    email: gkressi1@jhu.edu
+  - name: Gio Li
+    affiliation: jhu_neuro
+    email: zli230@jhu.edu
+  - name: Kristijan Armeni
+    affiliation: jhu_pbs
+    email: karmeni1@jhu.edu
+    orcid: 0000-0001-8391-8965
+    corresponding: true
+    url: https://www.kristijanarmeni.net
   affiliations:
-    - id: jhu
+    - id: jhu_pbs
       institution: Johns Hopkins University
       department: Psychological and Brain Sciences
+    - id: jhu_neuro
+      institution: Johns Hopkins University
+      department: Neuroscience
   github: https://github.com/KristijanArmeni/encoders_report
   # To autogenerate a Table of Contents, run "myst init --write-toc"
 site:
-  template: book-theme
-  title: Test
+  template: article-theme
+  title: Encoders Report
   # options:
   #   favicon: favicon.ico
   #   logo: site_logo.png
