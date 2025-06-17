@@ -76,15 +76,15 @@ The dataset is available via the OpenNeuro repository[^openneuro].
 
 [^openneuro]: https://openneuro.org/
 
-### Preprocessed fMRI responses ({math}`\textbf{Y}_{\textsf{fmri}}`)
+### Preprocessed fMRI responses ({math}`\textbf{Y}_{fmri}`)
 
 Because the focus of our work was on encoding models, we chose to use the preprocessed fMRI data provided by @lebel_natural_2023.
 As a result, our reproducibility efforts did not involve preprocessing of raw fMRI data, which includes steps such as motion correction, cross-run alignment, and temporal filtering.
-We limited our analysis to a subset of three participants ({math}`\textsf{S01, S02, S03}`) because they showed the highest signal quality and highest final performance in the original paper.
+We limited our analysis to a subset of three participants (`S01`, `S02`, `S03`) because they showed the highest signal quality and highest final performance in the original paper.
 We reasoned that this minimal subset of data would be sufficient to evaluate the reproducibility and replicability of the modeling results.
 
 We accessed the data using the DataLad data management tool [@halchenko_datalad_2021], as recommended by @lebel_natural_2023.
-Time series were available as `.h5p` files for each participant and each story. Following the original report, the first 10 seconds (5 TRs) of each story were trimmed to remove the 10-second silence period before the story began.
+Time series were available as `.h5p` files for each participant and each story. Following the original report, the first 10 seconds (5 {term}`TR`s) of each story were trimmed to remove the 10-second silence period before the story began.
 
 **Hemodynamic response estimation**  
 The fMRI BOLD responses are thought to represent temporally delayed (on the scale of seconds) and slowly fluctuating components of the underlying local neural activity [@logothetis_underpinnings_2003]. To account for this delayed response, predictor features for timepoint {math}`t` were constructed by concatenating stimulus features from time points {math}`t - 1` to {math}`t - 4` ({math}`n_{\text{delay}}=4`). For timepoints where {math}`t-k<0`, zero vectors were used as padding. This resulted in a predictor matrix {math}`X \in \mathbb{R}^{T\times 4D}`. Although this increases computational cost, it enables the regression model to capture the shape of the hemodynamic response function [@boynton_linear_1996] underlying the BOLD signal.
@@ -218,3 +218,34 @@ This observation is broadly consistent with prior work, which has repeatedly sho
 
 Sensory model encoding performance showed a narrower set of regions compared to the semantic model. **A)** Acoustic encoding model performance for each participant with increasing training set size (intact and shuffled predictors, shaded areas show standard error of the mean across 15 repetitions). **B)** Voxel-specific performance for `S02`.
 ```
+
+# Discussion
+
+Reproducible computational science ensures scientific integrity and allows researchers to efficiently build upon past work.
+Here, we report the results of a reproduction and replication project in computational neuroscience, a scientific discipline with computational techniques at its core [@kriegeskorte_cognitive_2018].
+We set out to reproduce and replicate evaluation results of a publicly available neuroimaging dataset recorded while participants listened to short stories [@lebel_natural_2023].
+Using the code shared with the paper, we reproduced the results showing that predicting brain activity with semantic embeddings of words in stories improved with increasing size of training datasets in each participant.
+When attempting to replicate the results by implementing the original analysis with our own code, our model performance was much lower than the published results.
+Accessing the original code, we were able to confirm that the discrepancy was due to the differences in implementation of the regression function.
+
+## Reproduction was largely frictionless, replication was not
+
+There were several examples of good practices that made our reproduction and replications attempts easier.First, Lebel et al [@lebel_natural_2023], distributed their dataset through a dedicated repository for data sharing [@markiewicz_openneuro_2021] and structured the dataset following a domain-specific community standard [@poldrack_making_2014] which made it possible to use a data management software [@halchenko_datalad_2021] for accessing it.
+While this might appear a trivial note given that the original work is a dataset descriptor with data sharing as it core objective, it warrants an emphasis as its benefits apply to any empirical work. Specifically, their approach made it easy for us to access the dataset programmatically when building the pipeline (e.g. writing a single script for downloading the data needed in our experiments as opposed to accessing the data interactively).
+This highlights the importance of data management infrastructure and tools in writing reproducible research code.
+
+Second, the authors provided cursory documentation and instructions on how to use their code for reproducing the results.
+While some elements of the shared code that would have been helpful were missing, for example the scripts used for executing the original analyses and the code that produced the figures, the information provided was nevertheless sufficient for us to be able to reproduce their full analysis on the three best participants.
+In addition, the provided code was modular, with specific analysis steps being implemented as separate routines (for example, the regression module contained the regression fitting functions etc.), making porting specific modules to our code easy and convenient. 
+Analyses in computational neuroscience frequently require custom implementations and workflows which makes a single-analysis-script approach impractical, which is customary in computational research [@balaban_ten_2021]. Navigating the code without basic documentation and sensible organization would have rendered replication much more effortful.
+
+Whereas reproducing the results was mostly achievable, replicating the work with our own code and adapting it for a novel experiment was not without friction.
+This came to the fore once we started building and evaluating our replication pipeline from the descriptions in the report.
+For example, when implementing the encoding model, we decided to use a standard machine learning library that conveniently implements ridge regression fitting routines, as it was no apparent from the original paper alone to us which kind of ridge regression was needed.
+Despite attempting to exactly match the hyperparameter selection, cross-validation scheme, and scoring functions, our encoding models kept underperforming relative to published results.
+Until we patched our pipeline with the original regression functions, it was unclear just which aspect of our pipeline was causing lower performance.
+Thus, without the shared code it would have been near impossible for us to troubleshoot our process on the basis of the published report alone. 
+
+As another case in point, we encountered challenges when attempting to build on the work and perform a nominally straightforward extension of the original experiment by building an encoding model based on the audio envelope of the stimuli.
+Whereas the process to temporally align word embeddings and brain data was documented, following the same recipe to align the shared auditory stimuli and brain signal resulted in inconsistencies in the sizes of the to-be-aligned data arrays.
+We were left to perform our best guess as to the proper alignment by triangulating between stimulus length and number of samples, significantly increasing the effort for an otherwise straightforward extension.
