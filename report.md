@@ -138,6 +138,13 @@ This prevented any statistical information leaking from the test data into our e
 The performance of the encoding model was quantified by calculating the Pearson correlation between the observed BOLD responses and the predicted BOLD responses on the held-out test story.
 Following @lebel_natural_2023 we averaged the encoding model's performance across 15 repetitions. This allows for a more reliable estimate thereby reducing the risk of performance being biased by any particular split of the data.
 
+:::{table}
+:label: regression_table
+![](#nb_regression_table)
+
+Regression parameters as used in the original work, reproduction, and replication experiments.
+:::
+
 ## Code
 
 All of our analysis and visualization code was implemented in Python 3.12 and the Python scientific stack (NumPy [@harris_array_2020], Pandas [@mckinney_data_2010; @the_pandas_development_team_pandas-devpandas_2024], SciPy [@virtanen_scipy_2020], scikit-learn [@pedregosa_scikit-learn:_2011], matplotlib [@hunter_matplotlib_2007; @the_matplotlib_development_team_matplotlib_2024], seaborn [@waskom_seaborn_2021], pycortex [@gao_pycortex_2015]).
@@ -249,3 +256,10 @@ Thus, without the shared code it would have been near impossible for us to troub
 As another case in point, we encountered challenges when attempting to build on the work and perform a nominally straightforward extension of the original experiment by building an encoding model based on the audio envelope of the stimuli.
 Whereas the process to temporally align word embeddings and brain data was documented, following the same recipe to align the shared auditory stimuli and brain signal resulted in inconsistencies in the sizes of the to-be-aligned data arrays.
 We were left to perform our best guess as to the proper alignment by triangulating between stimulus length and number of samples, significantly increasing the effort for an otherwise straightforward extension.
+
+:::{table}
+:label: practices_table
+![](#nb_practices_table)
+
+Our tally of software engineering practices in research with respect to reproducibility gains (the 3R framework by @connolly_software_2023), possible costs, and example tools we adopted.
+:::
