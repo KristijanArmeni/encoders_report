@@ -356,7 +356,7 @@ However, if analyses change, the researcher must redeploy the jobs on the comput
 A schematic overview of our software development and publishing workflow.
 :::
 
-**Package and documentation** The analysis package contains the separate `.py` modules corresponding to distinct analysis stages (e.g., `data.py` for loading the data, `regression.py` for model fitting, etc.) which provide the relevant functions (e.g., `data.load_fmri`, `regression.ridge_regression`, etc.). 
+**Package and documentation.** The analysis package contains the separate `.py` modules corresponding to distinct analysis stages (e.g., `data.py` for loading the data, `regression.py` for model fitting, etc.) which provide the relevant functions (e.g., `data.load_fmri`, `regression.ridge_regression`, etc.). 
 The analysis code is locally installable as a python package (via  Poetry[^poetry]) meaning that after downloading, the user can install the code and dependencies, for example using either `poetry install` or via `pip install -e .`.
 The code was versioned using git and hosted on GitHub, licensed with permissive MIT License. 
 
@@ -381,12 +381,12 @@ fig = make_brain_figure(
 
 :::
 
-**Data and computation** All our analyses were deployed on a high-performance computing (HPC) cluster.
+**Data and computation.** All our analyses were deployed on a high-performance computing (HPC) cluster.
 Because the encoding models are fit across the entire brain (resulting in $\approx10^3$ target variables in a regression model) using high-dimensional predictors (e.g., frequently several hundred dimensions), they require sufficiently powered computing infrastructure.
 For example, for the models with the largest training datasets size, we requested 180 gigabytes of memory (RAM).
 This required a separate deployment stream and precluded, for example, executing all the analyses in an interactive jupyter notebook session.
 
-**Publishing** A separate repository was used to visualize the results and publish an interactive research report using the MyST Markdown[^mystmd] framework [@rowan_cockett_jupyter-bookmystmd_2025].
+**Publishing.** A separate repository was used to visualize the results and publish an interactive research report using the MyST Markdown[^mystmd] framework [@rowan_cockett_jupyter-bookmystmd_2025].
 MyST allows users to author a computational report in a markdown file, providing all the functionality for technical writing (e.g., citations, cross-references, math rendering, etc.).
 A report file can be paired with a jupyter notebook that contains cells with results figures.
 The repository contains three files: the MyST configuration file (`myst.yaml`), a jupyter notebook rendering the figures (`figures.ipynb`), and a markdown file containing the actual report (`report.md`).
@@ -412,3 +412,36 @@ In our work, the use of AI-assisted programming was left to individual setup of 
 Our limited experience confirmed that AI-assisted programming reduced friction in specific tasks, such as writing docstrings.
 While there are good reasons to think that judicious use of AI-assisted programming will facilitate aspects of reproducible work that are currently considered time-consuming [@dupre_future_2024], using unchecked outputs of an over-confident code generation system can lead to erroneous code [@krishna_importing_2025]. Given the broad technical, ethical, and legal challenges when it comes to the use of generative AI in science [e.g., @bommasani_opportunities_2022; @birhane_science_2023; @binz_how_2025; @choudhury_promise_2025, @charness_next_2025; @shumailov_ai_2024], it will require dedicated efforts of professional communities to establish sound practices in AI-assisted development for reproducible research.
 
+## Moving forward
+
+We argue that software engineering practices must become a standard component in research to deliver on the promises of reproducible science.
+Because the scope of engineering needs in research can vary greatly across disciplines and projects, there is no one-size-fits-all approach in terms of what practices should be adopted and when [@connolly_software_2023].
+Below we briefly outline three ways of moving towards adopting software engineering practices for reproducibility.
+
+**Starting in research teams and laboratories.** Research groups and laboratories occupy an organizational level which allows swifter implementation of new policies than at the larger organizational levels with typically longer processes (e.g., university departments, schools etc.) and can be tailored to the needs of the group.
+Research teams could adopt a policy that encourages reproducible science, for example that research code (and other research artifacts) be reviewed by peers before papers are submitted [e.g., @barba_reproducibility_2012].
+A more comprehensive policy are internal reproducibility audits [@committee_on_reproducibility_and_replicability_in_science_reproducibility_2019], where research artifacts are validated independently by a peer within the team prior to publication.
+Regardless of the comprehensiveness level, collaborative code review should be viewed as an opportunity for knowledge exchange (coding strategies, new tools, etc.) among team members and strengthening the engineering expertise of the team as opposed to solely an error finding process [@vable_code_2021].
+
+**Towards integrated research objects and executable science.** To bring reproducible computational research to the fore, the research community should move beyond regarding research code and data as accompanying outputs to static reports.
+Instead, reports, code, data and other artifacts should be embedded as integrated research objects [@dupre_beyond_2022] and considered an equally important and credit-worthy output.
+All components in integrated research objects would undergo peer review process, which would provide the ability to reproduce key analyses and figures with minimal efforts increasing the confidence in the reliability of the results.
+An exciting avenue to realize this vision are executable research documents [e.g., @claerbout_electronic_1992] that combine text, data, code and visualization.
+Recently, authoring executable computational reports became more accessible through dedicated technical authoring and publishing frameworks such as Quarto[^quarto] and MyST Markdown[^mystmd].
+While numerous challenges remain, for example how to archive nested computational objects and the costs of computing infrastructure [@dupre_beyond_2022], the field of computational neuroscience and neuroimaging offers promising initiatives such as the Neurolibre[^neurolibre] preprint server integrating data, code, and runtime environment [@karakuzu_neurolibre_2022].
+
+[^quarto]: https://quarto.org/
+[^neurolibre]: https://neurolibre.org/
+
+**Professionalization of research software engineering in science.** Given the central role of programming and computational techniques in science today, research software engineering should be considered as a professional discipline with its own set of standards, curricula, recognition, and scholarly communities.
+Currently, code development in research does not yet enjoy equal professional standards and support as other scholarly activities and outputs, for example, teaching, scientific writing and citation practices [see @gewaltig_current_2014; @richard_mcelreath_science_2020].
+Professionalization is a slowly unfolding, incremental generational process requiring change at multiple levels, such as development training opportunities [@barba_path_2024], the possibility of a career path and professional communities [@brett_research_2017; @us_research_software_engineer_association_research_2023], and incentives structures [@nosek_strategy_2019; @barba_path_2024], among others.
+As a starting point, team leads should encourage interested researchers to engage with professional communities, such as the US Research Software Engineers association[^usrse] in the United States [@us_research_software_engineer_association_research_2023] and open source program offices (OSPOs), if one exists, at their institutions.
+
+[^usrse]: https://us-rse.org/
+
+# Conclusion
+
+Trustworthy, reliable, and effective scientific progress requires science to be reproducible.
+However, based on our effort to reproduce and replicate models of brain activity in a published fMRI dataset of story listening, we found that reproducible code was not necessarily easily reusable. 
+We argue that to deliver on the promises of open and reproducible science, software engineering practices are essential in mitigating barriers to computational reproducibility that remain even if data and code are openly shared.
