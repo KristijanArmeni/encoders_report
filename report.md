@@ -90,7 +90,7 @@ We accessed the data using the DataLad data management tool [@halchenko_datalad_
 Time series were available as `.h5p` files for each participant and each story. Following the original report, the first 10 seconds (5 {term}`TR`s) of each story were trimmed to remove the 10-second silence period before the story began.
 
 **Hemodynamic response estimation**  
-The fMRI BOLD responses are thought to represent temporally delayed (on the scale of seconds) and slowly fluctuating components of the underlying local neural activity [@logothetis_underpinnings_2003]. To account for this delayed response, predictor features for timepoint {math}`t` were constructed by concatenating stimulus features from time points {math}`t - 1` to {math}`t - 4` ({math}`n_{\text{delay}}=4`). For timepoints where {math}`t-k<0`, zero vectors were used as padding. This resulted in a predictor matrix {math}`X \in \mathbb{R}^{T\times 4D}`. Although this increases computational cost, it enables the regression model to capture the shape of the hemodynamic response function [@boynton_linear_1996] underlying the BOLD signal.
+The fMRI BOLD responses are thought to represent temporally delayed (on the scale of seconds) and slowly fluctuating components of the underlying local neural activity [@logothetis_underpinnings_2003]. To account for this delayed response, predictor features for timepoint {math}`t` were constructed by concatenating stimulus features from time points {math}`t - 1` to {math}`t - 4` ({math}`n_{delay}=4`). For timepoints where {math}`t-k<0`, zero vectors were used as padding. This resulted in a predictor matrix {math}`X \in \mathbb{R}^{T\times 4D}`. Although this increases computational cost, it enables the regression model to capture the shape of the hemodynamic response function [@boynton_linear_1996] underlying the BOLD signal.
 
 
 ## Predictors
@@ -99,15 +99,13 @@ The fMRI BOLD responses are thought to represent temporally delayed (on the scal
 
 To model brain activity related to aspects of linguistic meaning understanding during story listening, @lebel_natural_2023 used word embeddings --- high-dimensional vectors capturing distributional semantic properties of words based on their co-occurrences in large collections of text [@clark_vector_2015].
 
-**Extracting word embeddings and timings**  
-For each word in the story, we extracted its precomputed 985-dimensional embedding vector [@huth_natural_2016] from the {math}`\textsf{english1000sm.hf5}`[^english1000sm] data matrix (a lookup table) provided by @lebel_natural_2023 and available in the OpenNeuro repository. Words not present in the vocabulary were assigned a zero vector. For every story, this yielded a {math}`\hat{\textbf{X}}_{\textsf{semantic}} \in \mathbb{R}^{N_{\text{words}} \times 985}` matrix of word embeddings for each story where {math}`N_{\text{words}}` are all individual words in a story. The onset and offset times (in seconds) of words were extracted from {math}`\textsf{*.TextGrid}` annotation files[^textgrid] provided with the original dataset.
+**Extracting word embeddings and timings.** For each word in the story, we extracted its precomputed 985-dimensional embedding vector [@huth_natural_2016] from the `english1000sm.hf5`[^english1000sm] data matrix (a lookup table) provided by @lebel_natural_2023 and available in the OpenNeuro repository. Words not present in the vocabulary were assigned a zero vector. For every story, this yielded a {math}`\hat{\textbf{X}}_{semantic} \in \mathbb{R}^{N_{words} \times 985}` matrix of word embeddings for each story where {math}`N_{words}` are all individual words in a story. The onset and offset times (in seconds) of words were extracted from `*.TextGrid` annotation files[^textgrid] provided with the original dataset.
 
 [^english1000sm]: https://github.com/OpenNeuroDatasets/ds003020/blob/main/derivative/english1000sm.hf5
 
 [^textgrid]: These are structured .txt files that are used with the Praat software for acoustic analysis (https://www.fon.hum.uva.nl/praat/)
 
-**Aligning word embeddings with fMRI signal**  
-The fMRI BOLD signal was sampled at regular intervals (repetition time, or TR = 2s). To compute a stimulus matrix {math}`\hat{\textbf{X}}_{\textsf{semantic}}` that matched the sampling rate of the BOLD data, following @lebel_natural_2023, we first constructed an array of word times {math}`T^{\text{word}}` by assigning each word a time half-way between its onset and offset time. This was used to transform the embedding matrix (which was at discrete word times) into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word {math}`T^{\text{word}}`, where it is equal to the embedding vector of the word. We then convolved this signal with a Lanczos kernel (with parameter {math}`a=3` and {math}`f_{\text{cutoff}}=0.25` Hz) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal half-way between the TR times of the fMRI data to create the feature matrix used for regression, {math}`\textbf{X}_{\textsf{semantic}} \in \mathbb{R}^{N_{\text{TRs}} \times N^{\text{dim}}}`.
+**Aligning word embeddings with fMRI signal.** The fMRI BOLD signal was sampled at regular intervals (repetition time, or TR = 2s). To compute a stimulus matrix {math}`\hat{\textbf{X}}_{semantic}` that matched the sampling rate of the BOLD data, following @lebel_natural_2023, we first constructed an array of word times {math}`T_{word}` by assigning each word a time half-way between its onset and offset time. This was used to transform the embedding matrix (which was at discrete word times) into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word {math}`T_{word}`, where it is equal to the embedding vector of the word. We then convolved this signal with a Lanczos kernel (with parameter {math}`a=3` and {math}`f_{cutoff}=0.25` Hz) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal half-way between the TR times of the fMRI data to create the feature matrix used for regression, {math}`\textbf{X}_{semantic} \in \mathbb{R}^{N_{TRs} \times N_{dim}}`.
 
 ### Sensory predictor ({math}`\textbf{X}_{\textsf{sensory}}`)
 
@@ -275,11 +273,11 @@ Software engineering practices are no exception: practices will differ in terms 
 Our tally of software engineering practices in research with respect to reproducibility gains (the 3R framework by @connolly_software_2023), possible costs, and example tools we adopted.
 :::
 
-Table [](#practices_table) summarizes our own experience in adopting some of the research software practices, how we believe they mitigate the barriers to reproducibility, and their possible costs.
+[](#practices_table) summarizes our own experience in adopting some of the research software practices, how we believe they mitigate the barriers to reproducibility, and their possible costs.
 In tallying the reproducibility gains, we follow the framework of 3Rs for academic research software proposed by Connolly et al.: research code should be readable, reusable, and resilient [@connolly_software_2023].
-In terms of possible costs, "technical overhead" in Table [](#practices_table) refers to the degree of novel technical expertise required to adopt a practice.
+In terms of possible costs, "Technical Overhead" in [](#practices_table) refers to the degree of novel technical expertise required to adopt a practice.
 For example, even for someone who regularly writes analysis code, code packaging requires learning the packaging tools, configuration options, the package publishing ecosystem,  etc.
-``Time investment'', on the other hand, refers to the amount of time it takes to learn and subsequently apply a practice, once learned.[^practice_costs]
+"Time Investment", on the other hand, refers to the amount of time it takes to learn and subsequently apply a practice, once learned.[^practice_costs]
 
 [^practice_costs]: While these two aspects are certainly positively correlated to a significant extent, a practice can require little technical overhead, while still representing non-negligible time investment (e.g. writing documentation) or vice-versa (e.g. code packaging, which is set up only once, but requires dedicated technical know-how).
 
