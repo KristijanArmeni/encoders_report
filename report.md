@@ -9,6 +9,9 @@ keywords:
   - fMRI
   - computational neuroscience
   - research software engineering
+abbreviations:
+  MyST: Markedly Structured Text
+  HPC: High Performance Computing
 bibliography: library.bib
 ---
 
@@ -257,9 +260,137 @@ As another case in point, we encountered challenges when attempting to build on 
 Whereas the process to temporally align word embeddings and brain data was documented, following the same recipe to align the shared auditory stimuli and brain signal resulted in inconsistencies in the sizes of the to-be-aligned data arrays.
 We were left to perform our best guess as to the proper alignment by triangulating between stimulus length and number of samples, significantly increasing the effort for an otherwise straightforward extension.
 
+## Tallying software engineering practices for reproducibility in neuroscience
+
+Informed by our reproducibility and replication experience, we argue that software engineering practices, such as code documentation, code review, version control, and code testing, among others, are essential in mitigating barriers to reproducibility beyond what is achievable with data and code sharing alone.
+In doing so, we rejoin other scientists and software engineers in calling for software engineering maturity in research [@wilson_wheres_2006; @sandve_ten_2013; @wilson_best_2014; @wilson_good_2017; @storer_bridging_2017; @balaban_ten_2021; @barba_path_2024; @johnson_sciops_2024].
+While the benefits conferred by software engineering practices might appear uncontentious _in principle_, adoption of any new practice, be it for an individual or in a larger community, is far from straightforward _in practice_.
+Absent appropriate incentives, infrastructure and norms, adopting a new skill or behavior includes a perceived cost (e.g. the time it takes to acquire a new skill) which can be a significant deterrent to adoption [@nosek_strategy_2019; @armeni_towards_2021].
+Software engineering practices are no exception: practices will differ in terms of how difficult they are to adopt (i.e., technical overhead required), the time it takes to apply the practice, and the gain they bring for the researcher or the team adopting them.
+
 :::{table}
 :label: practices_table
 ![](#nb_practices_table)
 
 Our tally of software engineering practices in research with respect to reproducibility gains (the 3R framework by @connolly_software_2023), possible costs, and example tools we adopted.
 :::
+
+Table [](#practices_table) summarizes our own experience in adopting some of the research software practices, how we believe they mitigate the barriers to reproducibility, and their possible costs.
+In tallying the reproducibility gains, we follow the framework of 3Rs for academic research software proposed by Connolly et al.: research code should be readable, reusable, and resilient [@connolly_software_2023].
+In terms of possible costs, "technical overhead" in Table [](#practices_table) refers to the degree of novel technical expertise required to adopt a practice.
+For example, even for someone who regularly writes analysis code, code packaging requires learning the packaging tools, configuration options, the package publishing ecosystem,  etc.
+``Time investment'', on the other hand, refers to the amount of time it takes to learn and subsequently apply a practice, once learned.[^practice_costs]
+
+[^practice_costs]: While these two aspects are certainly positively correlated to a significant extent, a practice can require little technical overhead, while still representing non-negligible time investment (e.g. writing documentation) or vice-versa (e.g. code packaging, which is set up only once, but requires dedicated technical know-how).
+
+Research software specifically can vary in scope on a spectrum between a standalone analysis script and up to a mature software project used by a larger research community [@connolly_software_2023].
+Research software in computational neuroscience typically falls in between the two extremes.
+Computational neuroscience is is a diverse discipline in terms of the scale of investigations (e.g., ranging from single-neuron to whole-brain recordings) and the type of measurements used (e.g., static anatomical images, dynamic multi channel activity over time, or a combination of different data modalities) [@sejnowski_putting_2014].
+What the analyses have in common, however, is that they are composed of several stages (e.g., preprocessing, model fitting, statistical inference, visualization)[@gilmore_progress_2017] such that they frequently require custom routines and workflows [@balaban_ten_2021].
+What aspects of software engineering practices can specifically benefit computational reproducibility in human neuroscience?
+
+**Increasing transparency and readability: Documentation, code formatting, and code review.** Our replication experience showed that methodological details described in the published report were insufficient in detail and our success hinged on our ability to reverse engineer the procedures with the help of shared code.
+Details matter: given the complexity of analytical pipelines in computational neuroscience, even a nominally small analytical deviation can have large cumulative effects on results [@carp_secret_2012; @gilmore_progress_2017; @poldrack_scanning_2017; @errington_challenges_2021].
+Insufficient reporting standards in fMRI research have been confirmed in large-scale analyses of published work [@carp_secret_2012; @guo_reporting_2014; @poldrack_scanning_2017] and in other fields such as cancer biology [@errington_challenges_2021].
+Our first set of recommended practices thus centers on code transparency and readability.
+
+Sufficiently documented code, for example inline comments and function docstrings, significantly boosted our understanding of its purpose and thus our ability to reuse it in replication experiments.
+Conversely, the lack of such documentation made even the well-structured code difficult to understand and compelled us to perform a line-by-line walkthrough in order to understand the operations on different variables.
+Given the modular nature of shared code in neuroscience [@gilmore_progress_2017], we argue that, apart from inline comments and cursory mentions in papers, all shared code should minimally contain full docstrings for functions and classes and illustrative guides in how they can be invoked.
+This is particularly necessary for any custom in-house developed code.
+We found that adopting automatic documentation frameworks such as MkDocstrings[^mkdocstrings] (see [](#fig:workflow)) which parses docstrings in code, greatly improved our ability to review documentation.
+
+[^mkdocstrings]: https://mkdocstrings.github.io/
+
+Another obvious practice to boost code clarity is code review: auditing the code for style, quality, and accuracy by peers or developers other than the authors [@ackerman_software_1989; @bacchelli_expectations_2013].
+Apart from quality control, code review brings other important benefits such as increased author confidence, collegiality, and cross-team learning [@vable_code_2021; @rokem_ten_2024].
+We conducted code reviews in the form of brief code walkthroughs after every meeting.
+We found that incremental adoption was crucial.
+For example, while reviewing entire research code could be burdensome, reviewing smaller code chunks, soon after they were implemented, was very doable, improved code clarity, and allowed us to catch mistakes early.
+Like documentation, code review is a relatively straightforward practice to adopt insofar that it requires minimal to no technical overhead.
+While it can be a subset of code review, we include code formatting as a standalone practice which can be adopted without doing a code review (e.g. using dedicated tools such as linters).
+
+**Increasing resilience and reuse: Version control, packaging, and testing.** We view version control, packaging, and code testing as practices that require greater investment in familiarity with technical tools and possibly steeper learning curves. 
+Version control, a systematic way of recording changes made to files over time [@community_turing_2022], is a standard practice in software engineering. 
+While version control does not directly contribute to readability or reusability (in the sense that even extensively versioned code may not be re-executable), it is essential in making the computational research process resilient --- in the event of catastrophic changes, current state of files can be reverted to a previous state. 
+We adopted version control for the entire project duration as all team members were already regular users of version control.
+We adopted a simple collaborative workflow where we all had write access to a joint remote GitHub repository.
+This allowed us to flexibly employ branching, issues, pull requests etc. practices that we started using more often with as the project matured.
+
+Every reproducible research code, if it is to be reused by peers must be distributable.
+Making research software reusable is considered part of the FAIR principles of research software [@chue_hong_fair_2022]. Reusable code is easy to install and setup, which facilitates adoption and reuse [@ma_human_2024]. 
+Depending on complexity, research code can be made reusable in various ways [@community_turing_2022], one option is to distribute it as an installable _package_: a collection containing the code to be installed, specification of required dependencies, and any software metadata (e.g., author information, project description, etc.). 
+In practice, packaging means organizing your code following an expected directory structure and file naming conventions [@wasser_pyopenscipython-package-guide_2024].
+
+In addition to facilitating code reuse across different users, one of the advantages of installable code is that your code can be reused across your projects. 
+That turned out to be a crucial design factor in our reproducible workflow, where we wrapped our figure-making code into separate functions within the package. 
+These functions are reused in a jupyter notebook (part of a separate repository) which is embedded in the report authored with MyST Markdown (see [](#fig:workflow) and code in [](#lst:plot)). 
+The separation between analysis code (package) and its subsequent usage (e.g., in computational notebook, report) follows the principle of modular code design, also known as *do-not-repeat-yourself* (DRY) principle [@wilson_good_2017]. 
+Most programming languages come with dedicated packaging managers [@alser_packaging_2024]. 
+Whereas Python packaging ecosystem is sometimes perceived as unwieldy[^xkcd_packaging], we found that modern packaging tools, for example Poetry[^poetry] and uv[^uv], were straightforward to use, did not incur substantial technical overhead, and required only short time investment (e.g., {math}`\sim 60` mins).
+
+[^xkcd_packaging]: https://xkcd.com/1987
+[^poetry]: https://python-poetry.org/
+[^uv]: https://docs.astral.sh/uv/
+
+Finally, possibly the most extensive practice we include on our list is code testing. 
+Code testing is a process of writing dedicated routines that test specific parts of code or entire workflows for accuracy and syntactic correctness. 
+Yet, while testing in pure software development is a mature discipline and provides the broadest reproducibility benefits, research code comes with its own specific testing considerations and challenges [@eisty_testing_2025]. 
+To highlight just two, analysis code in empirical research depends on data which can contain inconsistencies and exceptions making it challenging to write a single test covering all exceptions. 
+In addition, in neuroscience the datasets tend to be large (on the orders of 10s of gigabytes) and given the need for tests to be performed frequently, dedicated test datasets would need to be created in order to keep the tests lightweight. 
+Second, the research process is iterative (e.g., output of one analysis stage shapes the analysis at the next stage) and the boundaries between the development and deployment phases are frequently blurry [@vliet_seven_2020], leading to challenging testing decisions and frequent need for updating the test suite. 
+In contrast, developing testing code demands upfront knowledge of requirements and substantial investment of time, neither of which are plentiful in neuroscience.
+Testing is the final software engineering practice on our list for a reason; we only started writing limited unit tests and basic package installation tests via PyTest and GitHub actions later in the project phase, once the workflows matured and required less frequent changes.
+
+## Towards reproducible scientific publishing workflows
+
+[](#figure_workflow) shows a high-level overview of our adopted code, documentation, and publishing workflow. It shows three main streams: i) packaged code and documentation, ii) computation, storage, and archiving, and iii) computational report.
+This architecture allows research code (e.g., analysis and plotting scripts) to be developed and versioned in one place and independently of the deployment (HPC) and the publishing streams.
+The workflow is semi-automatic. For example, documentation and report are deployed and rebuilt automatically upon changes to repositories via GitHub actions and GitHub Pages. 
+However, if analyses change, the researcher must redeploy the jobs on the computing cluster, download the new results, re-execute the report pipeline, and update the remote repositories.
+
+:::{figure} fig/manuscript_figures/figure4-workflow.svg
+:label: figure_workflow
+:width: 70%
+
+A schematic overview of our software development and publishing workflow.
+:::
+
+**Package and documentation** The analysis package contains the separate `.py` modules corresponding to distinct analysis stages (e.g., `data.py` for loading the data, `regression.py` for model fitting, etc.) which provide the relevant functions (e.g., `data.load_fmri`, `regression.ridge_regression`, etc.). 
+The analysis code is locally installable as a python package (via  Poetry[^poetry]) meaning that after downloading, the user can install the code and dependencies, for example using either `poetry install` or via `pip install -e .`.
+The code was versioned using git and hosted on GitHub, licensed with permissive MIT License. 
+
+We used MkDocs[^mkdocs] to parse the contents or the `./docs` folder in the project repository and to render the documentation website.
+We used MkDocstrings extension that automatically parsed analysis code docstrings and included it as part of the documentation website.
+The documentation site was published via GitHub Pages and set to redeploy automatically upon updates to the code repository via a GitHub actions.
+
+[^mkdocs]: https://www.mkdocs.org/
+
+:::{code} python
+:label:code_example
+:linenos:
+:caption: Example usage of packaged research code. The code for figures from the analysis package is imported and exectued in a jupyter notebook. The user is expected to have downloaded precomputed data (model scores) beforehand. The notebook cell rendering the figure is labeled and the figure can be reused in a MyST interactive report.
+
+# import code for figures from the package
+from encoders.plots import make_brain_figure
+
+#| label:brainfig
+fig = make_brain_figure(
+    data_folder="/path/to/downloaded/data"
+)
+
+:::
+
+**Data and computation** All our analyses were deployed on a high-performance computing (HPC) cluster.
+Because the encoding models are fit across the entire brain (resulting in $\approx10^3$ target variables in a regression model) using high-dimensional predictors (e.g., frequently several hundred dimensions), they require sufficiently powered computing infrastructure.
+For example, for the models with the largest training datasets size, we requested 180 gigabytes of memory (RAM).
+This required a separate deployment stream and precluded, for example, executing all the analyses in an interactive jupyter notebook session.
+
+**Publishing** A separate repository was used to visualize the results and publish an interactive research report using the MyST Markdown[^mystmd] framework [@rowan_cockett_jupyter-bookmystmd_2025].
+MyST allows users to author a computational report in a markdown file, providing all the functionality for technical writing (e.g., citations, cross-references, math rendering, etc.).
+A report file can be paired with a jupyter notebook that contains cells with results figures.
+The repository contains three files: the MyST configuration file (`myst.yaml`), a jupyter notebook rendering the figures (`figures.ipynb`), and a markdown file containing the actual report (`report.md`).
+Crucially, because the analysis code is modular and packaged, the jupyter notebook imports the `plots.py` module and reuses the code that creates the figures (see [](#code_example)), they are can be referenced and reused in the markdown report by the MyST parser.
+
+[^mystmd]: https://mystmd.org/
+
