@@ -394,3 +394,21 @@ Crucially, because the analysis code is modular and packaged, the jupyter notebo
 
 [^mystmd]: https://mystmd.org/
 
+## Limitations
+
+**End-to-end reproducibility.** From the perspective of reproducibility, our workflow falls short in certain respects.
+The compute and storage resources needed to fit the encoding models require access to HPC clusters, which not all research institutions or individual researchers have access to.
+While we documented the HPC scripts that a researcher would need to re-execute the analyses, the only part of the workflow that a user can directly execute with our workflow is to reproduce the figures from precomputed results (i.e. encoding model performance scores).
+
+**Other aspects of the software engineering and scientific computing landscape.** We focused on what we believe are software practices that directly mitigate barriers to reproducibility in a research lab setting. In doing so, we did not discuss other aspects of reproducible research code such as data management [@tenopir_data_2020], workflow management [@wilkinson_applying_2025], licensing [@morin_quick_2012], software metadata [@chue_hong_fair_2022], containerization [@moreau_containers_2023; alser_packaging_2024], or cloud-computing [@berriman_application_2013].
+We think these are important and exciting avenues for reproducible research and refer interested readers to cited references for further information about these aspects.
+
+**Impacts of AI-assisted software development.** A common deterrent in adoption of software engineering practices in research that these are time-consuming.
+Recent developments in generative artificial intelligence (AI), computing systems that generate code from prompts given in natural language, are reshaping how software engineers and researchers produce and evaluate code. 
+How will AI-assisted programming affect reproducible research?
+
+At the time of this writing, the landscape is still evolving, confined to individual experimentation and prototyping.
+In our work, the use of AI-assisted programming was left to individual setup of each author.
+Our limited experience confirmed that AI-assisted programming reduced friction in specific tasks, such as writing docstrings.
+While there are good reasons to think that judicious use of AI-assisted programming will facilitate aspects of reproducible work that are currently considered time-consuming [@dupre_future_2024], using unchecked outputs of an over-confident code generation system can lead to erroneous code [@krishna_importing_2025]. Given the broad technical, ethical, and legal challenges when it comes to the use of generative AI in science [e.g., @bommasani_opportunities_2022; @birhane_science_2023; @binz_how_2025; @choudhury_promise_2025, @charness_next_2025; @shumailov_ai_2024], it will require dedicated efforts of professional communities to establish sound practices in AI-assisted development for reproducible research.
+
