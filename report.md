@@ -162,7 +162,7 @@ The code for the replication and reproducibility experiments and its documentati
 We used the original data and code to reproduce the original experimental results.
 The code provided the core regression component, but lacked the capability to reproduce the figures.
 Thus, we ported the code into our own code base.
-To compute the results, we retained the default parameters, except for parameters `nboots`, `chunklen`, and `nchunk`[^parameters] which were set to 20, 10, and 10, respectively (see Table [](#tab:regression_parameters)).
+To compute the results, we retained the default parameters, except for parameters `nboots`, `chunklen`, and `nchunk`[^parameters] which were set to 20, 10, and 10, respectively (see [](#regression_table)).
 
 [^parameters]: For an explanation of the parameters see the "Code" section of the original paper [@lebel_natural_2023].
 
@@ -296,7 +296,7 @@ Sufficiently documented code, for example inline comments and function docstring
 Conversely, the lack of such documentation made even the well-structured code difficult to understand and compelled us to perform a line-by-line walkthrough in order to understand the operations on different variables.
 Given the modular nature of shared code in neuroscience [@gilmore_progress_2017], we argue that, apart from inline comments and cursory mentions in papers, all shared code should minimally contain full docstrings for functions and classes and illustrative guides in how they can be invoked.
 This is particularly necessary for any custom in-house developed code.
-We found that adopting automatic documentation frameworks such as MkDocstrings[^mkdocstrings] (see [](#fig:workflow)) which parses docstrings in code, greatly improved our ability to review documentation.
+We found that adopting automatic documentation frameworks such as MkDocstrings[^mkdocstrings] (see [](#figure_workflow)) which parses docstrings in code, greatly improved our ability to review documentation.
 
 [^mkdocstrings]: https://mkdocstrings.github.io/
 
@@ -322,7 +322,7 @@ In practice, packaging means organizing your code following an expected director
 
 In addition to facilitating code reuse across different users, one of the advantages of installable code is that your code can be reused across your projects. 
 That turned out to be a crucial design factor in our reproducible workflow, where we wrapped our figure-making code into separate functions within the package. 
-These functions are reused in a jupyter notebook (part of a separate repository) which is embedded in the report authored with MyST Markdown (see [](#fig:workflow) and code in [](#lst:plot)). 
+These functions are reused in a jupyter notebook (part of a separate repository) which is embedded in the report authored with MyST Markdown (see [](#figure_workflow) and code in [](#code_example)). 
 The separation between analysis code (package) and its subsequent usage (e.g., in computational notebook, report) follows the principle of modular code design, also known as *do-not-repeat-yourself* (DRY) principle [@wilson_good_2017]. 
 Most programming languages come with dedicated packaging managers [@alser_packaging_2024]. 
 Whereas Python packaging ecosystem is sometimes perceived as unwieldy[^xkcd_packaging], we found that modern packaging tools, for example Poetry[^poetry] and uv[^uv], were straightforward to use, did not incur substantial technical overhead, and required only short time investment (e.g., {math}`\sim 60` mins).
