@@ -9,6 +9,7 @@ project:
   # keywords: []
   toc:
     - file: report.md
+    - file: setup.md
     - file: notebook.ipynb
   #  - url: "https://gabrielkp.com/enc/"
   # does not work at the moment: https://github.com/jupyter-book/mystmd/issues/1445
@@ -37,6 +38,7 @@ project:
 site:
   template: article-theme
   title: Encoders Report
+  outline_maxdepth: 2
   # options:
   #   favicon: favicon.ico
   #   logo: site_logo.png
