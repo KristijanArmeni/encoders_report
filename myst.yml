@@ -2,9 +2,12 @@
 version: 1
 project:
   id: 4790582b-2186-41f1-b522-53cd9027de42
-  title:
-  licence:
-    code: MIT
+  license:
+    content:
+      id: CC-BY-4.0
+    code:
+      id: MIT
+  open_access: true
   # description:
   # keywords: []
   toc:
@@ -14,18 +17,54 @@ project:
   #  - url: "https://gabrielkp.com/enc/"
   # does not work at the moment: https://github.com/jupyter-book/mystmd/issues/1445
   authors:
-  - name: Gabriel Kressin Palacios
+  - name: Gabriel Kressin Palacios*
     affiliation: jhu_pbs
     email: gkressi1@jhu.edu
-  - name: Gio Li
+    orcid: 0009-0002-8482-3356
+    github: GabrielKP
+    equal_contributor: true
+    roles:
+      - conceptualization
+      - Data curation
+      - analysis
+      - visualization
+      - software
+      - validation
+      - writing
+      - editing
+      - administration
+  - name: Zhuoyang Li*
     affiliation: jhu_neuro
     email: zli230@jhu.edu
+    orcid: 0000-0002-2248-2982
+    github: zhuoyangli
+    equal_contributor: true
+    roles:
+      - conceptualization
+      - analysis
+      - methodology
+      - resources
+      - software
+      - writing
+      - editing
   - name: Kristijan Armeni
     affiliation: jhu_pbs
-    email: karmeni1@jhu.edu
+    email: kristijan.armeni@gmail.com
     orcid: 0000-0001-8391-8965
     corresponding: true
+    github: KristijanArmeni
     url: https://www.kristijanarmeni.net
+    roles:
+      - conceptualization
+      - analysis
+      - visualization
+      - software
+      - Data curation
+      - validation
+      - investigation
+      - writing
+      - editing
+      - administration
   affiliations:
     - id: jhu_pbs
       institution: Johns Hopkins University
@@ -35,10 +74,13 @@ project:
       department: Neuroscience
   github: https://github.com/KristijanArmeni/encoders_report
   # To autogenerate a Table of Contents, run "myst init --write-toc"
+  banner: fig/banner.svg
 site:
   template: article-theme
   title: Encoders Report
-  outline_maxdepth: 2
+  options:
+    outline_maxdepth: 2
   # options:
   #   favicon: favicon.ico
   #   logo: site_logo.png
+
