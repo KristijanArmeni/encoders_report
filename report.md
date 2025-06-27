@@ -15,7 +15,6 @@ abbreviations:
 bibliography: library.bib
 ---
 
-<!-- *[Documentation](https://github.com/GabrielKP/enc/)* -->
 
 # Introduction
 
@@ -148,7 +147,7 @@ Regression parameters as used in the original work, reproduction, and replicatio
 
 ## Code
 
-All of our analysis and visualization code was implemented in Python 3.12 and the Python scientific stack (NumPy [@harris_array_2020], Pandas [@mckinney_data_2010; @pandas_development_team_pandas-devpandas_2024], SciPy [@virtanen_scipy_2020], scikit-learn [@pedregosa_scikit-learn:_2011], matplotlib [@hunter_matplotlib_2007; @the_matplotlib_development_team_matplotlib_2024], seaborn [@waskom_seaborn_2021], pycortex [@gao_pycortex_2015]).
+All of our analysis and visualization code was implemented in Python 3.12 and the Python scientific stack (NumPy [@harris_array_2020], Pandas [@mckinney_data_2010; @the_pandas_development_team_pandas-devpandas_2024], SciPy [@virtanen_scipy_2020], scikit-learn [@pedregosa_scikit-learn:_2011], matplotlib [@hunter_matplotlib_2007; @the_matplotlib_development_team_matplotlib_2024], seaborn [@waskom_seaborn_2021], pycortex [@gao_pycortex_2015]).
 The code for the replication and reproducibility experiments and its documentation is available at a standalone GitHub repository[^enc_repo].
 
 [^enc_repo]: https://github.com/GabrielKP/enc
@@ -418,7 +417,7 @@ Below we briefly outline three ways of moving towards adopting software engineer
 
 **Starting in research teams and laboratories.** Research groups and laboratories occupy an organizational level which allows swifter implementation of new policies than at the larger organizational levels with typically longer processes (e.g., university departments, schools etc.) and can be tailored to the needs of the group.
 Research teams could adopt a policy that encourages reproducible science, for example that research code (and other research artifacts) be reviewed by peers before papers are submitted [e.g., @barba_reproducibility_2012].
-A more comprehensive policy are internal reproducibility audits [@committee_on_reproducibility_and_replicability_in_science_reproducibility_2019], where research artifacts are validated independently by a peer within the team prior to publication.
+A more comprehensive policy are internal reproducibility audits [@national_academies_of_sciences_engineering_and_medicine_reproducibility_2019], where research artifacts are validated independently by a peer within the team prior to publication.
 Regardless of the comprehensiveness level, collaborative code review should be viewed as an opportunity for knowledge exchange (coding strategies, new tools, etc.) among team members and strengthening the engineering expertise of the team as opposed to solely an error finding process [@vable_code_2021].
 
 **Towards integrated research objects and executable science.** To bring reproducible computational research to the fore, the research community should move beyond regarding research code and data as accompanying outputs to static reports.
