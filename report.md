@@ -161,21 +161,12 @@ This prevented any statistical information leaking from the test data into our e
 The performance of the encoding model was quantified as the Pearson correlation between observed and predicted BOLD responses on the held-out test story.
 To obtain a more reliable estimate, we averaged encoding model performance across 15 repetitions, thereby reducing the risk of performance being biased by any particular split of the data.
 
-:::{table}
-:label: regression_table
-![](#nb_regression_table)
-
-Regression parameters as used in the original work, reproduction, and replication experiments. For explanation of individual parameters see main text.
-:::
-
 ## Code
 
 All of our analysis and visualization code was implemented in Python 3.12 and the Python scientific stack (NumPy [@harris_array_2020], Pandas [@mckinney_data_2010; @the_pandas_development_team_pandas-devpandas_2024], SciPy [@virtanen_scipy_2020], scikit-learn [@pedregosa_scikit-learn:_2011], matplotlib [@hunter_matplotlib_2007; @the_matplotlib_development_team_matplotlib_2024], seaborn [@waskom_seaborn_2021], pycortex [@gao_pycortex_2015]).
 The code for the replication and reproducibility experiments and its documentation is available at a standalone GitHub repository[^enc_repo].
 
 [^enc_repo]: https://github.com/GabrielKP/enc
-
-
 
 # Results
 
@@ -185,10 +176,29 @@ We used the original data and code to reproduce the experimental results.
 Since the provided code contained the core regression component but lacked the capability to generate figures, we integrated it into our own codebase.
 We retained the default parameters, except for parameters `nboots`, `chunklen`, and `nchunk`[^parameters] which were set to 20, 10, and 10, respectively (see [](#regression_table)).
 
+:::{table}
+:label: regression_table
+![](#nb_regression_table)
+
+Regression parameters as used in the original work, reproduction, and replication experiments. For explanation of individual parameters see main text.
+:::
+
 [^parameters]: For an explanation of the parameters see the "Code" section of the original paper [@lebel_natural_2023].
 
 **We successfully reproduced published results.** [](#main_figure)[^icons_attribution] shows results of our reproduction experiment (panel B) alongside the originally published figures (panel A).
 Using the shared code and data for the three best performing participants (`S01`, `S02`, `S03`), we reproduced the reported results with participant `S03` showing the highest average test-set correlation at {math}`r \approx 0.08`, followed by `S02` at {math}`\approx 0.07`, and `S01` at {math}`\approx 0.06`.
+
+:::{hint}
+If parts of figures are not rendering correctly (can happen with panels containing brain plots), try refreshing the browser window.
+:::
+
+```{figure} fig/manuscript_figures/figure1-main.svg
+:label: main_figure
+**A-C**: Semantic encoding model performance (whole brain average) per participant with increasing training set sizes. Each line shows mean performance (shaded areas show standard error of the mean across 15 repetitions). **A)** Screen capture of figure published by @lebel_natural_2023 \[CC BY 4.0\], B) reproduction experiment, and **C)** the replication experiment. **D-F:** The results of the semantic encoding model for one participant (S02). The plots show the test-set performance with 25 training stories for each brain voxel on a flattened two-dimensional brain map. **D)** Figures from the original paper, **E)** for the reproduction experiment, and **F)** for the replication experiment.
+
+```
+
+[^icons_attribution]:  Icons from Flaticon.com: https://www.flaticon.com/free-icons/financial-report, https://www.flaticon.com/free-icons/data, https://www.flaticon.com/free-icons/unstructured-data
 
 **Model performance increased with larger training dataset sizes.** Our reproduction further confirmed that model performance depends on the amount of training data.
 For the best performing model, average performance nearly tripled (from 0.03 to 0.09) between the smallest ({math}`N^{\text{stories}} = 1`) and the largest ({math}`N^{\text{stories}} = 25`) training sets.
@@ -206,18 +216,6 @@ As in the original report, our reproduction results broadly confirmed that the m
 However, our reproduction pipeline yielded substantially lower effect sizes than the original results.
 Our best performing model achieved only 0.05 average performance compared to 0.09 in the original report and replication.
 While our models captured the language-related brain activity in relevant regions, they underperformed relative to the original results.
-
-:::{hint}
-If parts of figures are not rendering correctly (can happen with panels containing brain plots), try refreshing the browser window.
-:::
-
-```{figure} fig/manuscript_figures/figure1-main.svg
-:label: main_figure
-**A-C**: Semantic encoding model performance (whole brain average) per participant with increasing training set sizes. Each line shows mean performance (shaded areas show standard error of the mean across 15 repetitions). **A)** Screen capture of figure published by @lebel_natural_2023 \[CC BY 4.0\], B) reproduction experiment, and **C)** the replication experiment. **D-F:** The results of the semantic encoding model for one participant (S02). The plots show the test-set performance with 25 training stories for each brain voxel on a flattened two-dimensional brain map. **D)** Figures from the original paper, **E)** for the reproduction experiment, and **F)** for the replication experiment.
-
-```
-
-[^icons_attribution]:  Icons from Flaticon.com: https://www.flaticon.com/free-icons/financial-report, https://www.flaticon.com/free-icons/data, https://www.flaticon.com/free-icons/unstructured-data
 
 ### Why did replication results diverge?
 
