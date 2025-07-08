@@ -186,28 +186,25 @@ We retained the default parameters, except for parameters `nboots`, `chunklen`, 
 
 [^parameters]: For an explanation of the parameters see the "Code" section of the original paper [@lebel_natural_2023].
 
-**We successfully reproduced published results.** In [](#main_figure)[^icons_attribution], we show the results of our reproduction experiment (panel B) next to originally published figures (panel A).
-Using the shared code and data for the three best performing participants (`S01`, `S02`, `S03`), we were able to reproduce the reported results.
-As in the published results, the highest performing participant was `S03` with the highest average test-set correlation at {math}`r \approx 0.08`, followed by `S02` at {math}`\approx 0.07`, and `S01` at {math}`\approx 0.06`.
+**We successfully reproduced published results.** [](#main_figure)[^icons_attribution] shows results of our reproduction experiment (panel B) alongside the originally published figures (panel A).
+Using the shared code and data for the three best performing participants (`S01`, `S02`, `S03`), we reproduced the reported results with participant `S03` showing the highest average test-set correlation at {math}`r \approx 0.08`, followed by `S02` at {math}`\approx 0.07`, and `S01` at {math}`\approx 0.06`.
 
-**Model performance increased with larger training dataset sizes.**
-Our reproduction further confirmed that model performance depends on the amount of training data available for each participant.
-For the best performing model, performance nearly tripled (from average correlation about 0.03 to 0.09) between the smallest ({math}`N^{\text{stories}} = 1`) and the largest ({math}`N^{\text{stories}} = 25`) training set size.
+**Model performance increased with larger training dataset sizes.** Our reproduction further confirmed that model performance depends on the amount of training data.
+For the best performing model, average performance nearly tripled (from 0.03 to 0.09) between the smallest ({math}`N^{\text{stories}} = 1`) and the largest ({math}`N^{\text{stories}} = 25`) training sets.
 
-**Highest performance in the brain areas comprised the language network.** 
-The brain language network consists of multiple areas on the left and right sides behind the temples (temporal cortices), the front (frontal cortex) and the upper middle part (parietal cortex) [@friederici_language_2013; @hagoort_neurobiology_2019; @fedorenko_language_2024].
-Breaking down the average performance across the brain for each voxel for the best performing model (for participant `S02` at {math}`N^{\text{stories}} = 25`, [](#main_figure), panel E), we found, in line with the original report, that the strongest performance was achieved in the left temporal cortex with a peak correlation of about 0.5, followed by areas in the frontal and parietal cortices.
+**Highest performance in the brain areas comprised the language network.** Examining the spatial distribution of model performance across individual voxels, we expected the highest performance to occur in regions known to process language.
+The language network spans multiple lobes, including bilateral temporal, frontal, and parietal cortices [@friederici_language_2013; @hagoort_neurobiology_2019; @fedorenko_language_2024].
+For the best performing model (for participant `S02` at {math}`N^{\text{stories}} = 25`, [](#main_figure), panel E), peak performance was achieved for voxels in the left temporal cortex (correlation approximately 0.5), followed by frontal and parietal regions, consistent with the original report.
 
 ## Replication experiment
 
-**We replicated the spatial and training set size effects, but not the effect size.** 
-The results for model performance on example subject are shown in [](#main_figure), Panel C.
-Overall, we managed to reproduce the training set size effects and the broader spatial brain patterns.
-In terms of spatial patterns, the best performing voxels were found in the bilateral temporal, parietal, and prefrontal cortices which is broadly in line with the spatial patterns in the original report and our replication.
-As in the original report, our reproduction results broadly confirmed that the model showed better performance on the held-out story if trained on a larger set containing more training stories.
-However, the effect size obtained with our reproduction pipeline was almost half the size of the original results.
-Our best performing model did not go beyond average performance of 0.05 versus 0.09 for the best performing model in the original report and replication.
-That is, our models capture the language-related brain activity in the relevant brain areas, but they underperformed compared with the original results.
+**We replicated the spatial and training set size effects, but not the effect size.** The results for an example subject are shown in [](#main_figure), Panel C.
+We successfully reproduced the training set size effect and the overall spatial pattern.
+The best performing voxels were found in bilateral temporal, parietal, and prefrontal cortices, consistent with the original report and our replication.
+As in the original report, our reproduction results broadly confirmed that the model trained on larger datasets (i.e., more stories) showed better performance on the held-out story.
+However, our reproduction pipeline yielded substantially lower effect sizes than the original results.
+Our best performing model achieved only 0.05 average performance compared to 0.09 in the original report and replication.
+While our models captured the language-related brain activity in relevant regions, they underperformed relative to the original results.
 
 :::{hint}
 If parts of figures are not rendering correctly (can happen with panels containing brain plots), try refreshing the browser window.
@@ -223,9 +220,11 @@ If parts of figures are not rendering correctly (can happen with panels containi
 
 ### Why did replication results diverge?
 
-To assess the discrepancy between the reproduction and replication results, we incorporated the regression function from the original codebase into our replication pipeline ([](#figure_patching), panels A & B).
-This modification substantially improved model performance and successfully recovered the results reported in the original paper and reproduction experiment ([](#figure_patching), Panels C & D).
-Although we did not formally test the contributions of differences between implementations, we identified two crucial distinctions in the original code's regression approach that likely explain the performance improvement: 1) the SVD-based implementation explicitly removed components of the regressor matrix with small singular values; 2) instead of standard k-fold cross-validation, a chunking with bootstrapping strategy [@huth_natural_2016] was employed for hyperparameter optimization.
+We identified two key distinctions between the original code and our implementation: 1) instead of standard k-fold cross-validation, the original code used a chunking and bootstrapping strategy [@huth_natural_2016] for hyperparameter optimization; 2) singular value decomposition (SVD) was applied to remove low-variance components from the regressor matrix prior to regression.
+To isolate the effects of these differences, we selectively incorporated elements from the original code into our replication pipeline ([](#figure_patching), panel A) and compared model performance against our replication results ([](#figure_patching), panel B).
+We found that incorporating only the chunking and bootstrapping strategy did not improve performance ([](#figure_patching), panel C).
+In contrast, fitting ridge regression after SVD --- using the function from the original code --- restored model performance to the level reported in the original paper ([](#figure_patching), panel D).
+These results suggest that the custom ridge regression implementation was essential for reproducing the original results.
 
 ```{figure} fig/manuscript_figures/figure2-patching.svg
 :label: figure_patching
@@ -236,14 +235,20 @@ Replication results were improved after patching our code with regression implem
 
 ## Extension: Sensory encoding model
 
-One of the core motivations behind reproducible computational research is that it should, in principle, allow researchers to easily extend and build on the shared work.
+One of the core motivations behind reproducible computational research is that it should, in principle, allow researchers to extend and build on the shared work.
 To further benchmark our replication pipeline, we explored the feasibility of performing a small but meaningful extension to the original semantic encoding model.
-Processing of semantic features in language input is a high-level cognitive process that engages distributed brain networks [@binder_where_2009; @huth_natural_2016].
-As a contrast, we implemented a simpler encoding model based solely on a single one-dimensional acoustic feature of the stimulus, namely, instantaneous fluctuations of the auditory envelope which we termed sensory model.
 
-In [](#figure_extension) we report the results of the sensory model.
-Compared to the semantic model, it captured activity in a more restricted set of brain areas, with peak performance localized to the auditory cortex (AC) – a sensory area involved in early-stage auditory processing.
-This observation is broadly consistent with prior work, which has repeatedly shown that activity in auditory cortical regions is strongly modulated by low-level acoustic features, while higher-order language processing recruits a more extensive group of regions including temporal, parietal, and frontal cortices [@hickok_cortical_2007].
+Processing of semantic features in language input is considered a high-level cognitive process that engages a broadly distributed set of brain regions [@binder_where_2009; @huth_natural_2016].
+Next to the semantic interpretation of speech, a narrower set of brain areas near the temples, known as superior temporal cortex, processes speech in terms of its low-level acoustic information (e.g., phonemes, syllables) [@hickok_cortical_2007; @obleser_pre-lexical_2009; @price_anatomy_2010].
+To model this, we implemented a simpler encoding model based solely on a single one-dimensional acoustic feature of the stimulus, namely, instantaneous fluctuations of the audio envelope (see Section {ref}`sensory_predictor`) which we termed "sensory model".
+
+In this experiment we did not have prior results on the same dataset to benchmark against.
+Instead, we constructed a simple control condition by randomly shuffling the target variable (BOLD signals) across time and repeating the regression fitting procedure.
+The performance of the shuffled regression showed virtually no correlation with fMRI data ("x" markers in [](#figure_extension)) suggesting that sensory models uncovered meaningful neural responses to the audio envelope.
+
+Overall, the results of the sensory model ([](#figure_extension)) are broadly consistent with prior work.
+Not only did the model perform well above the shuffled baseline, it also captured activity in a restricted set of brain areas, with peak performance localized to the auditory cortex in both hemispheres.
+Prior work has reliably shown that low-level acoustic features strongly modulate activity localized to auditory cortical regions [@hickok_cortical_2007; @obleser_pre-lexical_2009; @price_anatomy_2010].
 
 ```{figure} fig/manuscript_figures/figure3-extension.svg
 :label: figure_extension
