@@ -127,6 +127,7 @@ The onset and offset times (in seconds) of words were extracted from `*.TextGrid
 
 **Aligning word embeddings with fMRI signal.** The fMRI BOLD signal was sampled at regular intervals (repetition time, or TR = 2s). To compute a stimulus matrix {math}`\hat{\mathbf{X}}_{semantic}` that matched the sampling rate of the BOLD data, following @lebel_natural_2023, we first constructed an array of word times {math}`T_{word}` by assigning each word a time half-way between its onset and offset time. This was used to transform the embedding matrix (which was at discrete word times) into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word {math}`T_{word}`, where it is equal to the embedding vector of the word. We then convolved this signal with a Lanczos kernel (with parameter {math}`a=3` and {math}`f_{cutoff}=0.25` Hz) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal half-way between the TR times of the fMRI data to create the feature matrix used for regression, {math}`\mathbf{X}_{semantic} \in \mathbb{R}^{N_{TRs} \times N_{dim}}`.
 
+(sec:sensory_predictor)=
 ### Sensory predictor ({math}`\mathbf{X}_{\textsf{sensory}}`)
 
 To benchmark the predictive performance of our semantic predictor, we decided to develop an additional, simpler encoding model based on acoustic properties of the stories (not reported in the original work by @lebel_natural_2023).
@@ -240,7 +241,7 @@ To further benchmark our replication pipeline, we explored the feasibility of pe
 
 Processing of semantic features in language input is considered a high-level cognitive process that engages a broadly distributed set of brain regions [@binder_where_2009; @huth_natural_2016].
 Next to the semantic interpretation of speech, a narrower set of brain areas near the temples, known as superior temporal cortex, processes speech in terms of its low-level acoustic information (e.g., phonemes, syllables) [@hickok_cortical_2007; @obleser_pre-lexical_2009; @price_anatomy_2010].
-To model this, we implemented a simpler encoding model based solely on a single one-dimensional acoustic feature of the stimulus, namely, instantaneous fluctuations of the audio envelope (see Section {ref}`sensory_predictor`) which we termed "sensory model".
+To model this, we implemented a simpler encoding model based solely on a single one-dimensional acoustic feature of the stimulus, namely, instantaneous fluctuations of the audio envelope (see Section {ref}`sec:sensory_predictor`) which we termed "sensory model".
 
 In this experiment we did not have prior results on the same dataset to benchmark against.
 Instead, we constructed a simple control condition by randomly shuffling the target variable (BOLD signals) across time and repeating the regression fitting procedure.
@@ -384,7 +385,8 @@ Developing testing code demands upfront knowledge of requirements and substantia
 Testing is the final software engineering practice on our list for a reason; we only started writing limited unit tests and basic package installation tests later in the project phase, once the workflows matured and required less frequent changes.
 Despite the challenges, we see clear benefits in striving towards test-driven development in research as it forces researchers to not only ascertain accuracy of code, but also to to think carefully about code design, and render explicit code assumptions.
 
-## Towards reproducible scientific publishing workflows {#sec:workflow}
+(sec:workflow)=
+## Towards reproducible scientific publishing workflows
 
 [](#figure_workflow) shows a high-level overview of our adopted code, documentation, and publishing workflow.
 It shows three main streams: i) packaged code and documentation, ii) computation, storage, and archiving, and iii) computational report.
