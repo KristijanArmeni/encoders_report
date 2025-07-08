@@ -57,15 +57,15 @@ Encoding models address this goal by quantifying the relationship between featur
 
 In practice, machine learning methods are often used to extract relevant stimulus features (e.g., semantic, visual, or acoustic), which are then used in statistical models (typically linear regression [@ivanova_beyond_2022]) to predict neural activity [@naselaris_encoding_2011]. By comparing the predictive performance of different encoding models (e.g., from different stimulus features across different brain areas), researchers can draw inferences about the spatial and temporal organization of brain function [@kriegeskorte_interpreting_2019; @doerig_neuroconnectionist_2023]. Encoding models are also foundational for brain-computer interfaces, including clinical applications such as speech prostheses, which aim to reconstruct intended speech from recorded brain activity [@silva_speech_2024].
 
-Formally, an encoding model estimates a function that maps stimulus features $\textbf{X}$ to brain responses $\textbf{Y}$. The model typically takes a linear form:
+Formally, an encoding model estimates a function that maps stimulus features $\mathbf{X}$ to brain responses $\mathbf{Y}$. The model typically takes a linear form:
 
 ```{math}
-\hat{\textbf{Y}} = \textbf{X} \hat{\textbf{W}}
+\hat{\mathbf{Y}} = \mathbf{X} \hat{\mathbf{W}}
 ```
 
-where {math}`\hat{\textbf{Y}} \in \mathbb{R}^{T \times N}` denotes predicted brain responses across $T$ time points and $N$ voxels, and {math}`\textbf{X} \in \mathbb{R}^{T \times D}` contains $D$-dimensional stimulus features. The weight matrix {math}`\hat{\textbf{W}} \in \mathbb{R}^{D \times N}` captures the contribution of each feature dimension to each voxel’s activity.
+where {math}`\hat{\mathbf{Y}} \in \mathbb{R}^{T \times N}` denotes predicted brain responses across $T$ time points and $N$ voxels, and {math}`\textbf{X} \in \mathbb{R}^{T \times D}` contains $D$-dimensional stimulus features. The weight matrix {math}`\hat{\textbf{W}} \in \mathbb{R}^{D \times N}` captures the contribution of each feature dimension to each voxel’s activity.
 
-Model estimation involves fitting $\hat{\textbf{W}}$ to predict brain activity $\hat{\textbf{Y}}_{\text{train}}$ from features $\textbf{X}_{\text{train}}$ using statistical methods such as ridge regression. Model performance is then evaluated on held-out test data by comparing predicted brain activity $\hat{\textbf{Y}}_{\textsf{test}}$ to observed brain activity $\textbf{Y}_{\textsf{test}}$ using a scoring function such as Pearson correlation: $r = \textsf{correlation}(\hat{\textbf{Y}}_{\textsf{test}}, \textbf{Y}_{\textsf{test}})$.
+Model estimation involves fitting $\hat{\textbf{W}}$ to predict brain activity $\hat{\mathbf{Y}}_{\text{train}}$ from features $\textbf{X}_{\text{train}}$ using statistical methods such as ridge regression. Model performance is then evaluated on held-out test data by comparing predicted brain activity $\hat{\mathbf{Y}}_{\textsf{test}}$ to observed brain activity $\textbf{Y}_{\textsf{test}}$ using a scoring function such as Pearson correlation: $r = \textsf{correlation}(\hat{\mathbf{Y}}_{\textsf{test}}, \textbf{Y}_{\textsf{test}})$.
 
 :::{note} Neuroscience Glossary
 :class: dropdown
@@ -265,21 +265,24 @@ Using the code shared with the paper, we reproduced the results showing that pre
 When attempting to replicate the results by implementing the original analysis with our own code, our model performance was much lower than the published results.
 Accessing the original code, we were able to confirm that the discrepancy was due to the differences in implementation of the regression function.
 
-## Reproduction was largely frictionless, replication was not
+## Reproduction was largely frictionless, replication and extension were not
 
-There were several examples of good practices that made our reproduction and replications attempts easier.First, Lebel et al [@lebel_natural_2023], distributed their dataset through a dedicated repository for data sharing [@markiewicz_openneuro_2021] and structured the dataset following a domain-specific community standard [@poldrack_making_2014] which made it possible to use a data management software [@halchenko_datalad_2021] for accessing it.
-While this might appear a trivial note given that the original work is a dataset descriptor with data sharing as it core objective, it warrants an emphasis as its benefits apply to any empirical work. Specifically, their approach made it easy for us to access the dataset programmatically when building the pipeline (e.g. writing a single script for downloading the data needed in our experiments as opposed to accessing the data interactively).
+There were several examples of good practices that made our reproduction and replications attempts easier.
+First, @lebel_natural_2023, distributed their dataset through a dedicated repository for data sharing [@markiewicz_openneuro_2021] and structured the dataset following a domain-specific community standard [@poldrack_making_2014] which made it possible to use a data management software [@halchenko_datalad_2021] for accessing it.
+While this might appear a trivial note given that the original work is a dataset descriptor with data sharing as it core objective, it warrants an emphasis as its benefits apply to any empirical work.
+Specifically, their approach made it easy for us to access the dataset programmatically when building the pipeline (e.g., writing a single script for downloading the data needed in our experiments as opposed to accessing the data interactively).
 This highlights the importance of data management infrastructure and tools in writing reproducible research code.
 
 Second, the authors provided cursory documentation and instructions on how to use their code for reproducing the results.
-While some elements of the shared code that would have been helpful were missing, for example the scripts used for executing the original analyses and the code that produced the figures, the information provided was nevertheless sufficient for us to be able to reproduce their full analysis on the three best participants.
-In addition, the provided code was modular, with specific analysis steps being implemented as separate routines (for example, the regression module contained the regression fitting functions etc.), making porting specific modules to our code easy and convenient. 
-Analyses in computational neuroscience frequently require custom implementations and workflows which makes a single-analysis-script approach impractical, which is customary in computational research [@balaban_ten_2021]. Navigating the code without basic documentation and sensible organization would have rendered replication much more effortful.
+While the shared code missed some elements that would have been helpful, for example the scripts used for executing the original analyses and the code that produced the figures, the information provided was nevertheless sufficient for us to be able to reproduce their full analysis on the three best participants.
+In addition, the provided code was modular, with specific analysis steps being implemented as separate routines (for example, the regression module contained the regression fitting functions etc.), making porting specific modules to our code easy and convenient.
+Analyses in computational neuroscience frequently require custom implementations and workflows, which is common in computational research [@balaban_ten_2021], making a single-analysis-script approach impractical.
+Navigating the code without basic documentation and sensible organization would have rendered replication much more effortful.
 
 Whereas reproducing the results was mostly achievable, replicating the work with our own code and adapting it for a novel experiment was not without friction.
 This came to the fore once we started building and evaluating our replication pipeline from the descriptions in the report.
-For example, when implementing the encoding model, we decided to use a standard machine learning library that conveniently implements ridge regression fitting routines, as it was no apparent from the original paper alone to us which kind of ridge regression was needed.
-Despite attempting to exactly match the hyperparameter selection, cross-validation scheme, and scoring functions, our encoding models kept underperforming relative to published results.
+For example, when implementing the encoding model, we decided to use a standard machine learning library that conveniently implements ridge regression fitting routines, as it was not apparent from the original paper alone to us which kind of ridge regression was needed.
+Despite attempting to match the hyperparameter selection procedure, cross-validation scheme, and scoring functions, our encoding models kept underperforming relative to published results.
 Until we patched our pipeline with the original regression functions, it was unclear just which aspect of our pipeline was causing lower performance.
 Thus, without the shared code it would have been near impossible for us to troubleshoot our process on the basis of the published report alone. 
 
@@ -290,9 +293,9 @@ We were left to perform our best guess as to the proper alignment by triangulati
 ## Tallying software engineering practices for reproducibility in neuroscience
 
 Informed by our reproducibility and replication experience, we argue that software engineering practices, such as code documentation, code review, version control, and code testing, among others, are essential in mitigating barriers to reproducibility beyond what is achievable with data and code sharing alone.
-In doing so, we rejoin other scientists and software engineers in calling for software engineering maturity in research [@wilson_wheres_2006; @sandve_ten_2013; @wilson_best_2014; @wilson_good_2017; @storer_bridging_2017; @balaban_ten_2021; @barba_path_2024; @johnson_sciops_2024].
+In doing so, we rejoin other scientists and software engineers in calling for software engineering maturity in research [e.g., @wilson_wheres_2006; @sandve_ten_2013; @wilson_best_2014; @wilson_good_2017; @storer_bridging_2017; @balaban_ten_2021; @barba_path_2024; @johnson_sciops_2024].
 While the benefits conferred by software engineering practices might appear uncontentious _in principle_, adoption of any new practice, be it for an individual or in a larger community, is far from straightforward _in practice_.
-Absent appropriate incentives, infrastructure and norms, adopting a new skill or behavior includes a perceived cost (e.g. the time it takes to acquire a new skill) which can be a significant deterrent to adoption [@nosek_strategy_2019; @armeni_towards_2021].
+Absent appropriate incentives, infrastructure, or norms, adopting a new skill or behavior includes a perceived cost (e.g., the time it takes to acquire a new skill) which can be a significant deterrent to adoption [@nosek_strategy_2019; @armeni_towards_2021].
 Software engineering practices are no exception: practices will differ in terms of how difficult they are to adopt (i.e., technical overhead required), the time it takes to apply the practice, and the gain they bring for the researcher or the team adopting them.
 
 :::{table}
@@ -312,68 +315,82 @@ For example, even for someone who regularly writes analysis code, code packaging
 
 Research software specifically can vary in scope on a spectrum between a standalone analysis script and up to a mature software project used by a larger research community [@connolly_software_2023].
 Research software in computational neuroscience typically falls in between the two extremes.
-Computational neuroscience is is a diverse discipline in terms of the scale of investigations (e.g., ranging from single-neuron to whole-brain recordings) and the type of measurements used (e.g., static anatomical images, dynamic multi channel activity over time, or a combination of different data modalities) [@sejnowski_putting_2014].
+Computational neuroscience is a diverse discipline in terms of the scale of investigations (e.g., ranging from single-neuron to whole-brain recordings) and the type of measurements used (e.g., static anatomical images, dynamic multi-channel activity over time, or a combination of different data modalities) [@sejnowski_putting_2014].
 What the analyses have in common, however, is that they are composed of several stages (e.g., preprocessing, model fitting, statistical inference, visualization)[@gilmore_progress_2017] such that they frequently require custom routines and workflows [@balaban_ten_2021].
-What aspects of software engineering practices can specifically benefit computational reproducibility in human neuroscience?
+With his context in mind, what aspects of software engineering practices can specifically benefit computational reproducibility in human neuroscience?
 
-**Increasing transparency and readability: Documentation, code formatting, and code review.** Our replication experience showed that methodological details described in the published report were insufficient in detail and our success hinged on our ability to reverse engineer the procedures with the help of shared code.
-Details matter: given the complexity of analytical pipelines in computational neuroscience, even a nominally small analytical deviation can have large cumulative effects on results [@carp_secret_2012; @gilmore_progress_2017; @poldrack_scanning_2017; @errington_challenges_2021].
-Insufficient reporting standards in fMRI research have been confirmed in large-scale analyses of published work [@carp_secret_2012; @guo_reporting_2014; @poldrack_scanning_2017] and in other fields such as cancer biology [@errington_challenges_2021].
+**Improving readability: Documentation, code formatting, and code review** 
+
+Our replication experience showed that methodological details described in the published report were insufficient in detail and our success hinged on our ability to reverse engineer the procedures with the help of shared code.
+Details matter: given the complexity of analytical pipelines in computational neuroscience, even a nominally small analytical deviation can have large cumulative effects on the results [@carp_secret_2012; @gilmore_progress_2017; @poldrack_scanning_2017; @errington_challenges_2021].
+Insufficient reporting standards in fMRI research have been confirmed in large-scale analyses of published work [@carp_secret_2012; @guo_reporting_2014; @poldrack_scanning_2017].
 Our first set of recommended practices thus centers on code transparency and readability.
 
-Sufficiently documented code, for example inline comments and function docstrings, significantly boosted our understanding of its purpose and thus our ability to reuse it in replication experiments.
+Sufficiently documented code significantly boosted our understanding of its purpose and thus our ability to reuse it in replication experiments.
 Conversely, the lack of such documentation made even the well-structured code difficult to understand and compelled us to perform a line-by-line walkthrough in order to understand the operations on different variables.
-Given the modular nature of shared code in neuroscience [@gilmore_progress_2017], we argue that, apart from inline comments and cursory mentions in papers, all shared code should minimally contain full docstrings for functions and classes and illustrative guides in how they can be invoked.
+Given the modular nature of shared code in neuroscience [@gilmore_progress_2017], we argue that, apart from inline comments and cursory mentions in papers, all shared code should contain docstrings for major functions and classes and illustrative guides in how they can be invoked.
 This is particularly necessary for any custom in-house developed code.
-We found that adopting automatic documentation frameworks such as MkDocstrings[^mkdocstrings] (see [](#figure_workflow)) which parses docstrings in code, greatly improved our ability to review documentation.
 
 [^mkdocstrings]: https://mkdocstrings.github.io/
 
-Another obvious practice to boost code clarity is code review: auditing the code for style, quality, and accuracy by peers or developers other than the authors [@ackerman_software_1989; @bacchelli_expectations_2013].
+Formatting and linting are simple, yet effective methods to improve code readability and to facilitate reusability.
+Once set up, dedicated code formatters and linters can be used without additional time investment, but deliver substantial benefits: improved code readability, early detection of potentially costly syntax errors, and style consistency.
+This facilitates collaboration both within and across research teams.
+The increased readability is not only valuable in collaborative environments, but also in situations were a single researcher reuses to their own code after an extended period.
+Overall, we recommend that code formatting and linters become a standard practice in research software development.
+
+Building analysis pipelines in neuroscience is seldom straightforward and often requires frequent iteration cycles.
+This can lead to technical debt and poorly organized code with unused parts which renders it difficult to understand [@vliet_seven_2020].
+Code review, a practice of auditing the code for style, quality, and accuracy by peers or developers other than the authors [@ackerman_software_1989; @bacchelli_expectations_2013], can help mitigating the accrued technical debt.
+Systematic quality control is a sign of operational maturity in scientific teams dealing with complex analysis projects [@johnson_sciops_2024].
 Apart from quality control, code review brings other important benefits such as increased author confidence, collegiality, and cross-team learning [@vable_code_2021; @rokem_ten_2024].
 We conducted code reviews in the form of brief code walkthroughs after every meeting.
-We found that incremental adoption was crucial.
-For example, while reviewing entire research code could be burdensome, reviewing smaller code chunks, soon after they were implemented, was very doable, improved code clarity, and allowed us to catch mistakes early.
+Incremental adoption was crucial.
+Reviewing entire research code can be burdensome, reviewing smaller code chunks, soon after we implemented them, was very doable, improved code clarity, and on multiple occasions allowed us to catch mistakes early.
 Like documentation, code review is a relatively straightforward practice to adopt insofar that it requires minimal to no technical overhead.
-While it can be a subset of code review, we include code formatting as a standalone practice which can be adopted without doing a code review (e.g. using dedicated tools such as linters).
 
-**Increasing resilience and reuse: Version control, packaging, and testing.** We view version control, packaging, and code testing as practices that require greater investment in familiarity with technical tools and possibly steeper learning curves. 
-Version control, a systematic way of recording changes made to files over time [@community_turing_2022], is a standard practice in software engineering. 
-While version control does not directly contribute to readability or reusability (in the sense that even extensively versioned code may not be re-executable), it is essential in making the computational research process resilient --- in the event of catastrophic changes, current state of files can be reverted to a previous state. 
-We adopted version control for the entire project duration as all team members were already regular users of version control.
-We adopted a simple collaborative workflow where we all had write access to a joint remote GitHub repository.
-This allowed us to flexibly employ branching, issues, pull requests etc. practices that we started using more often with as the project matured.
+**Improving resilience and reuse: Version control, packaging, and testing**
+We view version control, packaging, and code testing as practices that require greater investment in familiarity with technical tools and possibly steeper learning curves.
+Version control, a systematic way of recording changes made to files over time [@community_turing_2022], is a standard practice in software engineering.
+While version control does not directly contribute to readability or reusability (in the sense that even extensively versioned code may not be re-executable), it is essential in making the computational research process resilient --- in the event of catastrophic changes, current state of files can be reverted to a previous state.
+We adopted version control in a simple collaborative workflow where we all team members had write access to a joint remote repository.
 
-Every reproducible research code, if it is to be reused by peers must be distributable.
-Making research software reusable is considered part of the FAIR principles of research software [@chue_hong_fair_2022]. Reusable code is easy to install and setup, which facilitates adoption and reuse [@ma_human_2024]. 
-Depending on complexity, research code can be made reusable in various ways [@community_turing_2022], one option is to distribute it as an installable _package_: a collection containing the code to be installed, specification of required dependencies, and any software metadata (e.g., author information, project description, etc.). 
+Reproducible code guarantees that independent researchers can obtain the original results.
+But that does not imply that the shared code is straightforward to reuse.
+Reusable code is easy to install and set up, which facilitates adoption [@ma_human_2024], and is part of the FAIR principles of research software [@chue_hong_fair_2022].
+Depending on complexity, research code can be made reusable in various ways [@community_turing_2022], one option is to distribute it as an installable _package_: a collection containing the code to be installed, specification of required dependencies, and any software metadata (e.g., author information, project description, etc.).
 In practice, packaging means organizing your code following an expected directory structure and file naming conventions [@wasser_pyopenscipython-package-guide_2024].
 
-In addition to facilitating code reuse across different users, one of the advantages of installable code is that your code can be reused across your projects. 
-That turned out to be a crucial design factor in our reproducible workflow, where we wrapped our figure-making code into separate functions within the package. 
-These functions are reused in a jupyter notebook (part of a separate repository) which is embedded in the report authored with MyST Markdown (see [](#figure_workflow) and code in [](#code_example)). 
-The separation between analysis code (package) and its subsequent usage (e.g., in computational notebook, report) follows the principle of modular code design, also known as *do-not-repeat-yourself* (DRY) principle [@wilson_good_2017]. 
-Most programming languages come with dedicated packaging managers [@alser_packaging_2024]. 
-Whereas Python packaging ecosystem is sometimes perceived as unwieldy[^xkcd_packaging], we found that modern packaging tools, for example Poetry[^poetry] and uv[^uv], were straightforward to use, did not incur substantial technical overhead, and required only short time investment (e.g., {math}`\sim 60` mins).
+In addition to facilitating code reuse by independent researchers, one of the advantages of installable code is that it can be reused within and across your own projects.
+That turned out to be a crucial design factor in our reproducible workflow (see Section {ref}`sec:workflow` below), where we wrapped our figure-making code into separate functions within the package.
+These functions can be invoked as part of standalone scripts or imported in interactive notebooks and computational reports.
+The separation between analysis code (package) and its subsequent reuse (in computational notebooks, reports) follows the principle of modular code design, also known as _do-not-repeat-yourself_ (DRY) principle [@wilson_good_2017].
+Most programming languages come with dedicated packaging managers [@alser_packaging_2024].
+Whereas Python packaging ecosystem is sometimes perceived as unwieldy[^xkcd_packaging], we found that modern packaging tools, for example Poetry[^poetry] and uv[^uv], were mostly straightforward to use, did not incur substantial technical overhead, and required moderate time investment (e.g., {math}`\sim 60` mins).
 
 [^xkcd_packaging]: https://xkcd.com/1987
 [^poetry]: https://python-poetry.org/
 [^uv]: https://docs.astral.sh/uv/
 
-Finally, possibly the most extensive practice we include on our list is code testing. 
-Code testing is a process of writing dedicated routines that test specific parts of code or entire workflows for accuracy and syntactic correctness. 
-Yet, while testing in pure software development is a mature discipline and provides the broadest reproducibility benefits, research code comes with its own specific testing considerations and challenges [@eisty_testing_2025]. 
-To highlight just two, analysis code in empirical research depends on data which can contain inconsistencies and exceptions making it challenging to write a single test covering all exceptions. 
-In addition, in neuroscience the datasets tend to be large (on the orders of 10s of gigabytes) and given the need for tests to be performed frequently, dedicated test datasets would need to be created in order to keep the tests lightweight. 
-Second, the research process is iterative (e.g., output of one analysis stage shapes the analysis at the next stage) and the boundaries between the development and deployment phases are frequently blurry [@vliet_seven_2020], leading to challenging testing decisions and frequent need for updating the test suite. 
-In contrast, developing testing code demands upfront knowledge of requirements and substantial investment of time, neither of which are plentiful in neuroscience.
-Testing is the final software engineering practice on our list for a reason; we only started writing limited unit tests and basic package installation tests via PyTest and GitHub actions later in the project phase, once the workflows matured and required less frequent changes.
+Finally, possibly the most extensive practice we include on our list is code testing.
+Code testing is a process of writing dedicated routines that test specific parts of code or entire workflows for accuracy and syntactic correctness.
+Test-driven development in pure software is a mature discipline [@beck_test-driven_2015].
+It provides the broadest reproducibility benefits, yet testing research code comes with its own specific considerations and challenges [@eisty_testing_2025].
+To highlight just two, analysis code in empirical research depends on the data which can contain inconsistencies and exceptions making it challenging to write a single test covering all exceptions.
+In addition, in neuroscience the datasets tend to be large (on the orders of tens or hundreds of gigabytes) and given the need for tests to be performed frequently, dedicated test datasets would need to be created that appropriately mock real dataset characteristics while remaining lightweight.
+Second, the research process is iterative (e.g., output of one analysis stage shapes the analysis at the next stage) and the boundaries between the development and deployment phases are frequently blurry [@vliet_seven_2020], leading to challenging testing decisions and frequent need for updating the test suite.
+Developing testing code demands upfront knowledge of requirements and substantial investment of time and dedicated software expertise, neither of which are currently plentiful in neuroscience.
 
-## Towards reproducible scientific publishing workflows
+Testing is the final software engineering practice on our list for a reason; we only started writing limited unit tests and basic package installation tests later in the project phase, once the workflows matured and required less frequent changes.
+Despite the challenges, we see clear benefits in striving towards test-driven development in research as it forces researchers to not only ascertain accuracy of code, but also to to think carefully about code design, and render explicit code assumptions.
 
-[](#figure_workflow) shows a high-level overview of our adopted code, documentation, and publishing workflow. It shows three main streams: i) packaged code and documentation, ii) computation, storage, and archiving, and iii) computational report.
+## Towards reproducible scientific publishing workflows {#sec:workflow}
+
+[](#figure_workflow) shows a high-level overview of our adopted code, documentation, and publishing workflow.
+It shows three main streams: i) packaged code and documentation, ii) computation, storage, and archiving, and iii) computational report.
 This architecture allows research code (e.g., analysis and plotting scripts) to be developed and versioned in one place and independently of the deployment (HPC) and the publishing streams.
-The workflow is semi-automatic. For example, documentation and report are deployed and rebuilt automatically upon changes to repositories via GitHub actions and GitHub Pages. 
+The workflow is semi-automatic.
+For example, documentation and report are deployed and rebuilt automatically upon changes to repositories via GitHub actions and GitHub Pages.
 However, if analyses change, the researcher must redeploy the jobs on the computing cluster, download the new results, re-execute the report pipeline, and update the remote repositories.
 
 :::{figure} fig/manuscript_figures/figure4-workflow.svg
@@ -383,9 +400,9 @@ However, if analyses change, the researcher must redeploy the jobs on the comput
 A schematic overview of our software development and publishing workflow.
 :::
 
-**Package and documentation.** The analysis package contains the separate `.py` modules corresponding to distinct analysis stages (e.g., `data.py` for loading the data, `regression.py` for model fitting, etc.) which provide the relevant functions (e.g., `data.load_fmri`, `regression.ridge_regression`, etc.). 
-The analysis code is locally installable as a python package (via  Poetry[^poetry]) meaning that after downloading, the user can install the code and dependencies, for example using either `poetry install` or via `pip install -e .`.
-The code was versioned using git and hosted on GitHub, licensed with permissive MIT License. 
+**Package and documentation** The analysis package contains the separate `.py` modules corresponding to distinct analysis stages (e.g., `data.py` for loading the data, `regression.py` for model fitting, etc.) which provide the relevant functions (e.g., `data.load_fmri`, `regression.ridge_regression`, etc.).
+The analysis code is locally installable as a python package (via  Poetry[^poetry]) meaning that after downloading, the user can install the code and dependencies, for example using either `poetry install` or via `pip install -e`.
+The code was versioned using git and hosted on GitHub, licensed with permissive MIT License.
 
 We used MkDocs[^mkdocs] to parse the contents or the `./docs` folder in the project repository and to render the documentation website.
 We used MkDocstrings extension that automatically parsed analysis code docstrings and included it as part of the documentation website.
@@ -408,36 +425,42 @@ fig = make_brain_figure(
 
 :::
 
-**Data and computation.** All our analyses were deployed on a high-performance computing (HPC) cluster.
+**Data and computation** All our analyses were deployed on a high-performance computing (HPC) cluster.
 Because the encoding models are fit across the entire brain (resulting in $\approx10^3$ target variables in a regression model) using high-dimensional predictors (e.g., frequently several hundred dimensions), they require sufficiently powered computing infrastructure.
-For example, for the models with the largest training datasets size, we requested 180 gigabytes of memory (RAM).
-This required a separate deployment stream and precluded, for example, executing all the analyses in an interactive jupyter notebook session.
+For example, to fit a model on the largest training set size with 25 stories, we requested about 60 gigabytes of memory (RAM).
+This required fitting multiple models in parallel in a separate deployment stream and precluded, for example, executing all the analyses sequentially in an interactive jupyter notebook session.
 
-**Publishing.** A separate repository was used to visualize the results and publish an interactive research report using the MyST Markdown[^mystmd] framework [@rowan_cockett_jupyter-bookmystmd_2025].
+**Publishing** A separate repository was used to visualize the results and publish an interactive research report[^enc_report] using the MyST Markdown framework [@rowan_cockett_jupyter-bookmystmd_2025].
 MyST allows users to author a computational report in a markdown file, providing all the functionality for technical writing (e.g., citations, cross-references, math rendering, etc.).
-A report file can be paired with a jupyter notebook that contains cells with results figures.
-The repository contains three files: the MyST configuration file (`myst.yaml`), a jupyter notebook rendering the figures (`figures.ipynb`), and a markdown file containing the actual report (`report.md`).
-Crucially, because the analysis code is modular and packaged, the jupyter notebook imports the `plots.py` module and reuses the code that creates the figures (see [](#code_example)), they are can be referenced and reused in the markdown report by the MyST parser.
+A report file (`report.md`) is paired with a jupyter notebook which imports the `plots.py` module and reuses the code that creates the figures.
+Because the notebook cells outputting the figures are labeled (following MyST syntax, see [](#code_example)), they can be referenced and reused in the report.
+
+[^enc_report]: https://kristijanarmeni.github.io/encoders_report/
 
 [^mystmd]: https://mystmd.org/
 
 ## Limitations
 
-**End-to-end reproducibility.** From the perspective of reproducibility, our workflow falls short in certain respects.
-The compute and storage resources needed to fit the encoding models require access to HPC clusters, which not all research institutions or individual researchers have access to.
-While we documented the HPC scripts that a researcher would need to re-execute the analyses, the only part of the workflow that a user can directly execute with our workflow is to reproduce the figures from precomputed results (i.e. encoding model performance scores).
+**End-to-end reproducibility** From the perspective of reproducibility, our workflow falls short in certain respects.
+Fitting all encoding models reported in this work necessitates access to a high-performance computing (HPC) cluster[^hpc_access], which is not universally available to all research institutions or individual researchers.
+However, researchers without access to HPC or substantial parallelism can still reproduce the figures from precomputed results (i.e., encoding model performance scores) or reproduce subsets of the full analyses.
+We expect that with advances of computing resources and infrastructure [e.g., @hayashi_brainlifeio_2024] such barriers will become progressively less limiting, but presently remain a barrier.
 
-**Other aspects of the software engineering and scientific computing landscape.** We focused on what we believe are software practices that directly mitigate barriers to reproducibility in a research lab setting. In doing so, we did not discuss other aspects of reproducible research code such as data management [@tenopir_data_2020], workflow management [@wilkinson_applying_2025], licensing [@morin_quick_2012], software metadata [@chue_hong_fair_2022], containerization [@moreau_containers_2023; alser_packaging_2024], or cloud-computing [@berriman_application_2013].
+[^hpc_access]: While a desktop computer with 64GB of RAM and 16 cores (AMD Ryzen 9 5950X) was sufficient to fit the most resource-demanding encoding model, the process was time-consuming: fitting 15 repetitions of model fitting on one dataset size (out of total 13) for one participant required 5 hours.
+
+**Other aspects of the software engineering and scientific computing landscape** We focused on what we believe are software practices that directly mitigate barriers to reproducibility in a research lab setting.
+In doing so, we did not discuss other aspects of reproducible research such as data management [@tenopir_data_2020], workflow management [@wilkinson_applying_2025], licensing [@morin_quick_2012], software metadata [@chue_hong_fair_2022], containerization [@moreau_containers_2023; @alser_packaging_2024], or cloud-computing [@berriman_application_2013].
 We think these are important and exciting avenues for reproducible research and refer interested readers to cited references for further information about these aspects.
 
-**Impacts of AI-assisted software development.** A common deterrent in adoption of software engineering practices in research that these are time-consuming.
-Recent developments in generative artificial intelligence (AI), computing systems that generate code from prompts given in natural language, are reshaping how software engineers and researchers produce and evaluate code. 
+**Impacts of AI-assisted software development** A common deterrent in adoption of software engineering practices in research is that these are time-consuming.
+Recent developments in generative artificial intelligence (AI), computing systems that generate code from prompts given in natural language, are reshaping how software engineers and researchers produce and evaluate code.
 How will AI-assisted programming affect reproducible research?
 
 At the time of this writing, the landscape is still evolving, confined to individual experimentation and prototyping.
 In our work, the use of AI-assisted programming was left to individual setup of each author.
-Our limited experience confirmed that AI-assisted programming reduced friction in specific tasks, such as writing docstrings.
-While there are good reasons to think that judicious use of AI-assisted programming will facilitate aspects of reproducible work that are currently considered time-consuming [@dupre_future_2024], using unchecked outputs of an over-confident code generation system can lead to erroneous code [@krishna_importing_2025]. Given the broad technical, ethical, and legal challenges when it comes to the use of generative AI in science [e.g., @bommasani_opportunities_2022; @birhane_science_2023; @binz_how_2025; @choudhury_promise_2025; @charness_next_2025; @shumailov_ai_2024], it will require dedicated efforts of professional communities to establish sound practices in AI-assisted development for reproducible research.
+Our limited experience confirmed that AI-assisted programming reduced friction in specific tasks, such as writing documentation.
+While there are good reasons to expect that judicious use of AI-assisted programming will facilitate aspects of reproducible work that are currently considered time-consuming [@dupre_future_2024], using unchecked outputs of an over-confident code generation system can lead to erroneous code [e.g., @krishna_importing_2025].
+Given the broad technical, ethical, and legal challenges when it comes to the use of generative AI in science [e.g., @bommasani_opportunities_2022; @birhane_science_2023; @binz_how_2025; @choudhury_promise_2025; @charness_next_2025; @shumailov_ai_2024], it will require dedicated efforts of professional communities to establish sound practices in AI-assisted development for reproducible research.
 
 ## Moving forward
 
@@ -445,30 +468,31 @@ We argue that software engineering practices must become a standard component in
 Because the scope of engineering needs in research can vary greatly across disciplines and projects, there is no one-size-fits-all approach in terms of what practices should be adopted and when [@connolly_software_2023].
 Below we briefly outline three ways of moving towards adopting software engineering practices for reproducibility.
 
-**Starting in research teams and laboratories.** Research groups and laboratories occupy an organizational level which allows swifter implementation of new policies than at the larger organizational levels with typically longer processes (e.g., university departments, schools etc.) and can be tailored to the needs of the group.
+**Starting in research teams and laboratories** Research groups and laboratories occupy an organizational level which allows swifter implementation of new policies than at the larger organizational levels with typically longer processes (e.g., university departments, schools etc.) and can be tailored to the needs of the group.
 Research teams could adopt a policy that encourages reproducible science, for example that research code (and other research artifacts) be reviewed by peers before papers are submitted [e.g., @barba_reproducibility_2012].
 A more comprehensive policy are internal reproducibility audits [@national_academies_of_sciences_engineering_and_medicine_reproducibility_2019], where research artifacts are validated independently by a peer within the team prior to publication.
 Regardless of the comprehensiveness level, collaborative code review should be viewed as an opportunity for knowledge exchange (coding strategies, new tools, etc.) among team members and strengthening the engineering expertise of the team as opposed to solely an error finding process [@vable_code_2021].
 
-**Towards integrated research objects and executable science.** To bring reproducible computational research to the fore, the research community should move beyond regarding research code and data as accompanying outputs to static reports.
+**Towards integrated research objects and executable science** To bring reproducible computational research to the fore, the research community should move beyond regarding research code and data as accompanying outputs to static reports.
 Instead, reports, code, data and other artifacts should be embedded as integrated research objects [@dupre_beyond_2022] and considered an equally important and credit-worthy output.
 All components in integrated research objects would undergo peer review process, which would provide the ability to reproduce key analyses and figures with minimal efforts increasing the confidence in the reliability of the results.
-An exciting avenue to realize this vision are executable research documents [e.g., @claerbout_electronic_1992] that combine text, data, code and visualization.
-Recently, authoring executable computational reports became more accessible through dedicated technical authoring and publishing frameworks such as Quarto[^quarto] and MyST Markdown[^mystmd].
+An exciting avenue to realize this vision are executable research documents that combine text, data, code and visualization.
+Although the idea has a venerable history [e.g., @claerbout_electronic_1992], authoring executable computational reports became more accessible recently through dedicated technical authoring and publishing frameworks such as Quarto[^quarto] and MyST Markdown that we adopted in current work.
 While numerous challenges remain, for example how to archive nested computational objects and the costs of computing infrastructure [@dupre_beyond_2022], the field of computational neuroscience and neuroimaging offers promising initiatives such as the Neurolibre[^neurolibre] preprint server integrating data, code, and runtime environment [@karakuzu_neurolibre_2022].
 
 [^quarto]: https://quarto.org/
 [^neurolibre]: https://neurolibre.org/
 
-**Professionalization of research software engineering in science.** Given the central role of programming and computational techniques in science today, research software engineering should be considered as a professional discipline with its own set of standards, curricula, recognition, and scholarly communities.
+**Professionalization of research software engineering in science** Given the central role of programming and computational techniques in science today, research software engineering should be considered as a professional discipline with its own set of standards, curricula, recognition, and scholarly communities.
 Currently, code development in research does not yet enjoy equal professional standards and support as other scholarly activities and outputs, for example, teaching, scientific writing and citation practices [see @gewaltig_current_2014; @richard_mcelreath_science_2020].
-Professionalization is a slowly unfolding, incremental generational process requiring change at multiple levels, such as development training opportunities [@barba_path_2024], the possibility of a career path and professional communities [@brett_research_2017; @us_research_software_engineer_association_research_2023], and incentives structures [@nosek_strategy_2019; @barba_path_2024], among others.
-As a starting point, team leads should encourage interested researchers to engage with professional communities, such as the US Research Software Engineers association[^usrse] in the United States [@us_research_software_engineer_association_research_2023] and open source program offices (OSPOs), if one exists, at their institutions.
+Professionalization is a slowly unfolding, incremental generational process requiring change at multiple levels, such as development training opportunities [@barba_path_2024], the possibility of a career path and professional communities [@brett_research_2017; @us_research_software_engineer_association_research_2023], and incentive structures [@nosek_strategy_2019; @barba_path_2024], among others.
+As a starting point, team leads should encourage interested researchers to engage with professional communities, such as the US Research Software Engineers association in the United States [@us_research_software_engineer_association_research_2023], and open source program offices (OSPOs), if one exists, at their institutions.
 
 [^usrse]: https://us-rse.org/
 
 # Conclusion
 
 Trustworthy, reliable, and effective scientific progress requires science to be reproducible.
-However, based on our effort to reproduce and replicate models of brain activity in a published fMRI dataset of story listening, we found that reproducible code was not necessarily easily reusable. 
-We argue that to deliver on the promises of open and reproducible science, software engineering practices are essential in mitigating barriers to computational reproducibility that remain even if data and code are openly shared.
+Here we reported on our effort to reproduce and replicate models of brain activity in a published fMRI story listening dataset.
+Despite the results being reproducible with original code, independent replication on the basis of report alone proved challenging and required substantial effort.
+We argue that to deliver on the promises of open and reproducible science, software engineering practices are essential in mitigating barriers to computational reproducibility and replicability that remain even if data and code are openly shared.
