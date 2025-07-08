@@ -188,6 +188,10 @@ However, the effect size obtained with our reproduction pipeline was almost half
 Our best performing model did not go beyond average performance of 0.05 versus 0.09 for the best performing model in the original report and replication.
 That is, our models capture the language-related brain activity in the relevant brain areas, but they underperformed compared with the original results.
 
+:::{hint}
+If parts of figures are not rendering correctly (can happen with panels containing brain plots), try refreshing the browser window.
+:::
+
 ```{figure} fig/manuscript_figures/figure1-main.svg
 :label: main_figure
 **A-C**: Semantic encoding model performance (whole brain average) per participant with increasing training set sizes. Each line shows mean performance (shaded areas show standard error of the mean across 15 repetitions). **A)** Screen capture of figure published by @lebel_natural_2023 \[CC BY 4.0\], B) reproduction experiment, and **C)** the replication experiment. **D-F:** The results of the semantic encoding model for one participant (S02). The plots show the test-set performance with 25 training stories for each brain voxel on a flattened two-dimensional brain map. **D)** Figures from the original paper, **E)** for the reproduction experiment, and **F)** for the replication experiment.
@@ -204,7 +208,7 @@ Although we did not formally test the contributions of differences between imple
 
 ```{figure} fig/manuscript_figures/figure2-patching.svg
 :label: figure_patching
-:width: 60%
+:width: 100%
 
 Replication results were improved after patching our code with regression implementation from @lebel_natural_2023. **A)** The pipeline of our replication used the regression function in [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html) [@pedregosa_scikit-learn:_2011]. **B)** The 'patched' pipeline used the regression function from [Lebel et al.](https://github.com/HuthLab/deep-fMRI-dataset/blob/master/encoding/ridge_utils/ridge.py) **C & D:** Semantic encoding model performance (whole brain average) per participant with increasing training set sizes. Each line shows mean performance (shaded areas show standard error of the mean across 15 repetitions).
 ```
