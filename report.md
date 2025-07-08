@@ -44,10 +44,16 @@ The main contributions of our work are:
 # Methods
 
 In what follows, we provide a high-level overview of the methodology, the data used, and the analysis design for our experiments following the original experiment and dataset [@lebel_natural_2023].
+All of our analysis and visualization code was implemented in Python 3.12 and the Python scientific stack (NumPy [@harris_array_2020], Pandas [@mckinney_data_2010; @the_pandas_development_team_pandas-devpandas_2024], SciPy [@virtanen_scipy_2020], scikit-learn [@pedregosa_scikit-learn:_2011], matplotlib [@hunter_matplotlib_2007; @the_matplotlib_development_team_matplotlib_2024], seaborn [@waskom_seaborn_2021], pycortex [@gao_pycortex_2015]).
+The data and code for the replication and reproducibility experiments and the documentation is available at standalone OSF[^osf] and GitHub repositories[^github], respectively.
+
+[^osf]: https://osf.io/8w5cb/
+[^github]: https://github.com/GabrielKP/enc
 
 ## Encoding models
 
-A central goal in computational neuroscience is to test hypotheses about the computations and representations the brain uses to process information. Encoding models address this goal by quantifying the relationship between features of a stimulus and the corresponding neural responses to the same stimulus.
+A central goal in computational neuroscience is to test hypotheses about the computations and representations the brain uses to process information.
+Encoding models address this goal by quantifying the relationship between features of a stimulus and its corresponding neural responses.
 
 In practice, machine learning methods are often used to extract relevant stimulus features (e.g., semantic, visual, or acoustic), which are then used in statistical models (typically linear regression [@ivanova_beyond_2022]) to predict neural activity [@naselaris_encoding_2011]. By comparing the predictive performance of different encoding models (e.g., from different stimulus features across different brain areas), researchers can draw inferences about the spatial and temporal organization of brain function [@kriegeskorte_interpreting_2019; @doerig_neuroconnectionist_2023]. Encoding models are also foundational for brain-computer interfaces, including clinical applications such as speech prostheses, which aim to reconstruct intended speech from recorded brain activity [@silva_speech_2024].
 
@@ -91,13 +97,17 @@ The dataset is available via the OpenNeuro repository[^openneuro].
 Because the focus of our work was on encoding models, we chose to use the preprocessed fMRI data provided by @lebel_natural_2023.
 As a result, our reproducibility efforts did not involve preprocessing of raw fMRI data, which includes steps such as motion correction, cross-run alignment, and temporal filtering.
 We limited our analysis to a subset of three participants (`S01`, `S02`, `S03`) because they showed the highest signal quality and highest final performance in the original paper.
-We reasoned that this minimal subset of data would be sufficient to evaluate the reproducibility and replicability of the modeling results.
+We reasoned that this data would be sufficient to evaluate reproducibility and replicability, as higher quality data would allow us to make more nuanced evaluations in case we found performance discrepancies, and that this data is more likely to be used by other researchers.
 
 We accessed the data using the DataLad data management tool [@halchenko_datalad_2021], as recommended by @lebel_natural_2023.
 Time series were available as `.h5p` files for each participant and each story. Following the original report, the first 10 seconds (5 {term}`TR`s) of each story were trimmed to remove the 10-second silence period before the story began.
 
 **Hemodynamic response estimation**  
-The fMRI BOLD responses are thought to represent temporally delayed (on the scale of seconds) and slowly fluctuating components of the underlying local neural activity [@logothetis_underpinnings_2003]. To account for this delayed response, predictor features for timepoint {math}`t` were constructed by concatenating stimulus features from time points {math}`t - 1` to {math}`t - 4` ({math}`n_{delay}=4`). For timepoints where {math}`t-k<0`, zero vectors were used as padding. This resulted in a predictor matrix {math}`X \in \mathbb{R}^{T\times 4D}`. Although this increases computational cost, it enables the regression model to capture the shape of the hemodynamic response function [@boynton_linear_1996] underlying the BOLD signal.
+The fMRI BOLD responses are thought to represent temporally delayed (on the scale of seconds) and slowly fluctuating components of the underlying local neural activity [@logothetis_underpinnings_2003].
+Following @lebel_natural_2023 we constructed predictor features for timepoint {math}`t` by concatenating stimulus features from time points {math}`t - 1` to {math}`t - 4` ({math}`n_{delay}=4`) to account for the delayed neural response.
+For timepoints where {math}`t-k<0`, zero vectors were used as padding.
+This resulted in a predictor matrix {math}`X \in \mathbb{R}^{T\times 4D}`.
+Although this increases computational cost, it enables the regression model to capture the shape of the hemodynamic response function [@boynton_linear_1996] underlying the BOLD signal.
 
 
 ## Predictors
@@ -106,7 +116,10 @@ The fMRI BOLD responses are thought to represent temporally delayed (on the scal
 
 To model brain activity related to aspects of linguistic meaning understanding during story listening, @lebel_natural_2023 used word embeddings --- high-dimensional vectors capturing distributional semantic properties of words based on their co-occurrences in large collections of text [@clark_vector_2015].
 
-**Extracting word embeddings and timings.** For each word in the story, we extracted its precomputed 985-dimensional embedding vector [@huth_natural_2016] from the `english1000sm.hf5`[^english1000sm] data matrix (a lookup table) provided by @lebel_natural_2023 and available in the OpenNeuro repository. Words not present in the vocabulary were assigned a zero vector. For every story, this yielded a {math}`\hat{\textbf{X}}_{semantic} \in \mathbb{R}^{N_{words} \times 985}` matrix of word embeddings for each story where {math}`N_{words}` are all individual words in a story. The onset and offset times (in seconds) of words were extracted from `*.TextGrid` annotation files[^textgrid] provided with the original dataset.
+**Extracting word embeddings and timings** For each word in the story, we extracted its precomputed 985-dimensional embedding vector [@huth_natural_2016] from the `english1000sm.hf5`[^english1000sm] data matrix (a lookup table) provided by @lebel_natural_2023 and available in the OpenNeuro repository.
+Words not present in the vocabulary were assigned a zero vector.
+For every story, this yielded a {math}`\hat{\textbf{X}}_{semantic} \in \mathbb{R}^{N_{words} \times 985}` matrix of word embeddings for each story where {math}`N_{words}` are all individual words in a story.
+The onset and offset times (in seconds) of words were extracted from `*.TextGrid` annotation files[^textgrid] provided with the original dataset.
 
 [^english1000sm]: https://github.com/OpenNeuroDatasets/ds003020/blob/main/derivative/english1000sm.hf5
 
@@ -123,10 +136,11 @@ The trimmed envelope was then downsampled to the sampling frequency of the fMRI 
 
 ## Ridge regression
 
-To fit a penalized ridge regression model, we used the scikit-learn library [@pedregosa_scikit-learn:_2011], which is a mature library for machine learning with a large user-base and community support.
+In the reproduction experiment, we used the ridge regression implementation provided with the shared code. 
+In our replication experiment, we used the scikit-learn library [@pedregosa_scikit-learn:_2011], which is a mature library for machine learning with a large user-base and community support.
 Specifically, we used the `RidgeCV()` class which performs a leave-one-out cross-validation to select the best value of the {math}`\alpha` hyperparameter for each target variable (i.e. brain activity time courses in each voxel) prior to fitting the model.
 We set the possible hyperparamater values to {math}`\alpha \in` `np.logspace(1, 3, 10)` as in the original report [@lebel_natural_2023].
-The {math}`\alpha` value that resulted in the highest product-moment correlation coefficient then was used by `RidgeCV()` as the hyperparameter value to fit the model.
+The {math}`\alpha` value that resulted in the highest product-moment correlation coefficient was then used by `RidgeCV()` as the hyperparameter value to fit the model.
 
 ## Evaluation
 
@@ -143,14 +157,14 @@ This prevented any statistical information leaking from the test data into our e
 
 ### Performance metrics
 
-The performance of the encoding model was quantified by calculating the Pearson correlation between the observed BOLD responses and the predicted BOLD responses on the held-out test story.
-Following @lebel_natural_2023 we averaged the encoding model's performance across 15 repetitions. This allows for a more reliable estimate thereby reducing the risk of performance being biased by any particular split of the data.
+The performance of the encoding model was quantified as the Pearson correlation between observed and predicted BOLD responses on the held-out test story.
+To obtain a more reliable estimate, we averaged encoding model performance across 15 repetitions, thereby reducing the risk of performance being biased by any particular split of the data.
 
 :::{table}
 :label: regression_table
 ![](#nb_regression_table)
 
-Regression parameters as used in the original work, reproduction, and replication experiments.
+Regression parameters as used in the original work, reproduction, and replication experiments. For explanation of individual parameters see main text.
 :::
 
 ## Code
@@ -166,10 +180,9 @@ The code for the replication and reproducibility experiments and its documentati
 
 ## Reproduction experiment
 
-We used the original data and code to reproduce the original experimental results.
-The code provided the core regression component, but lacked the capability to reproduce the figures.
-Thus, we ported the code into our own code base.
-To compute the results, we retained the default parameters, except for parameters `nboots`, `chunklen`, and `nchunk`[^parameters] which were set to 20, 10, and 10, respectively (see [](#regression_table)).
+We used the original data and code to reproduce the experimental results.
+Since the provided code contained the core regression component but lacked the capability to generate figures, we integrated it into our own codebase.
+We retained the default parameters, except for parameters `nboots`, `chunklen`, and `nchunk`[^parameters] which were set to 20, 10, and 10, respectively (see [](#regression_table)).
 
 [^parameters]: For an explanation of the parameters see the "Code" section of the original paper [@lebel_natural_2023].
 
