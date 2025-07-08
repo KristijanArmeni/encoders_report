@@ -63,9 +63,9 @@ Formally, an encoding model estimates a function that maps stimulus features $\m
 \hat{\mathbf{Y}} = \mathbf{X} \hat{\mathbf{W}}
 ```
 
-where {math}`\hat{\mathbf{Y}} \in \mathbb{R}^{T \times N}` denotes predicted brain responses across $T$ time points and $N$ voxels, and {math}`\textbf{X} \in \mathbb{R}^{T \times D}` contains $D$-dimensional stimulus features. The weight matrix {math}`\hat{\textbf{W}} \in \mathbb{R}^{D \times N}` captures the contribution of each feature dimension to each voxel’s activity.
+where {math}`\hat{\mathbf{Y}} \in \mathbb{R}^{T \times N}` denotes predicted brain responses across $T$ time points and $N$ voxels, and {math}`\mathbf{X} \in \mathbb{R}^{T \times D}` contains $D$-dimensional stimulus features. The weight matrix {math}`\hat{\mathbf{W}} \in \mathbb{R}^{D \times N}` captures the contribution of each feature dimension to each voxel’s activity.
 
-Model estimation involves fitting $\hat{\textbf{W}}$ to predict brain activity $\hat{\mathbf{Y}}_{\text{train}}$ from features $\textbf{X}_{\text{train}}$ using statistical methods such as ridge regression. Model performance is then evaluated on held-out test data by comparing predicted brain activity $\hat{\mathbf{Y}}_{\textsf{test}}$ to observed brain activity $\textbf{Y}_{\textsf{test}}$ using a scoring function such as Pearson correlation: $r = \textsf{correlation}(\hat{\mathbf{Y}}_{\textsf{test}}, \textbf{Y}_{\textsf{test}})$.
+Model estimation involves fitting $\hat{\mathbf{W}}$ to predict brain activity $\hat{\mathbf{Y}}_{\text{train}}$ from features $\mathbf{X}_{\text{train}}$ using statistical methods such as ridge regression. Model performance is then evaluated on held-out test data by comparing predicted brain activity $\hat{\mathbf{Y}}_{\textsf{test}}$ to observed brain activity $\mathbf{Y}_{\textsf{test}}$ using a scoring function such as Pearson correlation: $r = \textsf{correlation}(\hat{\mathbf{Y}}_{\textsf{test}}, \mathbf{Y}_{\textsf{test}})$.
 
 :::{note} Neuroscience Glossary
 :class: dropdown
@@ -92,7 +92,7 @@ The dataset is available via the OpenNeuro repository[^openneuro].
 
 [^openneuro]: https://openneuro.org/
 
-### Preprocessed fMRI responses ({math}`\textbf{Y}_{fmri}`)
+### Preprocessed fMRI responses ({math}`\mathbf{Y}_{fmri}`)
 
 Because the focus of our work was on encoding models, we chose to use the preprocessed fMRI data provided by @lebel_natural_2023.
 As a result, our reproducibility efforts did not involve preprocessing of raw fMRI data, which includes steps such as motion correction, cross-run alignment, and temporal filtering.
@@ -112,22 +112,22 @@ Although this increases computational cost, it enables the regression model to c
 
 ## Predictors
 
-### Semantic predictor ({math}`\textbf{X}_{\textsf{semantic}}`)
+### Semantic predictor ({math}`\mathbf{X}_{\textsf{semantic}}`)
 
 To model brain activity related to aspects of linguistic meaning understanding during story listening, @lebel_natural_2023 used word embeddings --- high-dimensional vectors capturing distributional semantic properties of words based on their co-occurrences in large collections of text [@clark_vector_2015].
 
 **Extracting word embeddings and timings** For each word in the story, we extracted its precomputed 985-dimensional embedding vector [@huth_natural_2016] from the `english1000sm.hf5`[^english1000sm] data matrix (a lookup table) provided by @lebel_natural_2023 and available in the OpenNeuro repository.
 Words not present in the vocabulary were assigned a zero vector.
-For every story, this yielded a {math}`\hat{\textbf{X}}_{semantic} \in \mathbb{R}^{N_{words} \times 985}` matrix of word embeddings for each story where {math}`N_{words}` are all individual words in a story.
+For every story, this yielded a {math}`\hat{\mathbf{X}}_{semantic} \in \mathbb{R}^{N_{words} \times 985}` matrix of word embeddings for each story where {math}`N_{words}` are all individual words in a story.
 The onset and offset times (in seconds) of words were extracted from `*.TextGrid` annotation files[^textgrid] provided with the original dataset.
 
 [^english1000sm]: https://github.com/OpenNeuroDatasets/ds003020/blob/main/derivative/english1000sm.hf5
 
 [^textgrid]: These are structured .txt files that are used with the Praat software for acoustic analysis (https://www.fon.hum.uva.nl/praat/)
 
-**Aligning word embeddings with fMRI signal.** The fMRI BOLD signal was sampled at regular intervals (repetition time, or TR = 2s). To compute a stimulus matrix {math}`\hat{\textbf{X}}_{semantic}` that matched the sampling rate of the BOLD data, following @lebel_natural_2023, we first constructed an array of word times {math}`T_{word}` by assigning each word a time half-way between its onset and offset time. This was used to transform the embedding matrix (which was at discrete word times) into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word {math}`T_{word}`, where it is equal to the embedding vector of the word. We then convolved this signal with a Lanczos kernel (with parameter {math}`a=3` and {math}`f_{cutoff}=0.25` Hz) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal half-way between the TR times of the fMRI data to create the feature matrix used for regression, {math}`\textbf{X}_{semantic} \in \mathbb{R}^{N_{TRs} \times N_{dim}}`.
+**Aligning word embeddings with fMRI signal.** The fMRI BOLD signal was sampled at regular intervals (repetition time, or TR = 2s). To compute a stimulus matrix {math}`\hat{\mathbf{X}}_{semantic}` that matched the sampling rate of the BOLD data, following @lebel_natural_2023, we first constructed an array of word times {math}`T_{word}` by assigning each word a time half-way between its onset and offset time. This was used to transform the embedding matrix (which was at discrete word times) into a continuous-time representation. This representation is zero at all timepoints except for the middle of each word {math}`T_{word}`, where it is equal to the embedding vector of the word. We then convolved this signal with a Lanczos kernel (with parameter {math}`a=3` and {math}`f_{cutoff}=0.25` Hz) to smooth the embeddings over time and mitigate high-frequency noise. Finally, we resampled the signal half-way between the TR times of the fMRI data to create the feature matrix used for regression, {math}`\mathbf{X}_{semantic} \in \mathbb{R}^{N_{TRs} \times N_{dim}}`.
 
-### Sensory predictor ({math}`\textbf{X}_{\textsf{sensory}}`)
+### Sensory predictor ({math}`\mathbf{X}_{\textsf{sensory}}`)
 
 To benchmark the predictive performance of our semantic predictor, we decided to develop an additional, simpler encoding model based on acoustic properties of the stories (not reported in the original work by @lebel_natural_2023).
 The audio envelope was computed by taking the absolute value of the hilbert-transformed wavfile data.
